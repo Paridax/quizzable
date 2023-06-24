@@ -1,4 +1,4 @@
-module db.go
+module trevord.live/quizzable
 
 go 1.18
 

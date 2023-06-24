@@ -17,7 +17,7 @@ go get github.com/pocketbase/pocketbase
 The program can be tested with the following command:
 
 ```bash
-go run db.go serve --http 127.0.0.1:8091
+go run quizzable.go serve --http 127.0.0.1:8091
 ```
 
 ## Building
