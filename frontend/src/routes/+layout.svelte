@@ -1,10 +1,13 @@
-<script lang='ts'>
-	// The ordering of these imports is critical to your app working properly
-	import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
-	// If you have source.organizeImports set to true in VSCode, then it will auto change this ordering
+<script lang="ts">
+	// Color theming for the app
+	import '../theme.postcss';
 	import '@skeletonlabs/skeleton/styles/skeleton.css';
-	// Most of your app wide CSS should be put in this file
+	// Most of app CSS
 	import '../app.postcss';
 </script>
 
-<slot />
+<div class="app min-h-screen w-full">
+	<main class="w-full">
+		<slot />
+	</main>
+</div>
