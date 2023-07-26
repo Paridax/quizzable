@@ -1,6 +1,4 @@
-<!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
-
-<div class="container h-full mx-auto">
+<div class="lg:max-w h-full mx-auto">
 	<div class="space-y-5 py-10">
 		<h2 class="h2 font-bold w-full text-center">Welcome!</h2>
 		<p class="w-1/2 text-center mx-auto">
