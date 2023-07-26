@@ -1,5 +1,9 @@
 <script lang="ts">
+	import { applyAction, enhance } from '$app/forms';
 	import { currentUser } from '$lib/pocketbase';
+    import { pb } from '$lib/pocketbase';
+	import { redirect } from '@sveltejs/kit';
+
 	const guestLinks = {
 		Home: '/',
 		Login: '/login',
@@ -7,9 +11,8 @@
 	};
 
 	const userLinks = {
-		Home: '/',
-		Profile: '/profile',
-		Logout: '/logout'
+		Home: '/home',
+		Profile: '/profile'
 	};
 </script>
 
@@ -23,6 +26,16 @@
 						<a class="btn variant-soft-primary" href={userLinks[link]}>{link}</a>
 					</li>
 				{/each}
+                <li>
+                    <form method="POST" action="/logout" use:enhance={() => {
+                        return async ({result}) => {
+                            pb.authStore.clear();
+                            await applyAction(result);
+                        }
+                    }}>
+                        <button class="btn variant-soft-error">Logout</button>
+                    </form>
+                </li>
 			{:else}
 				{#each Object.keys(guestLinks) as link}
 					<li>
