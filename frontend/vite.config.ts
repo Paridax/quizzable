@@ -7,13 +7,20 @@ export default ({ mode }: { mode: string }) => {
 	process.env = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
 	let PORT = Number(process.env.PORT) || 3000;
 	if (mode === 'production') PORT = 3001;
+
 	return defineConfig({
 		plugins: [sveltekit()],
 		test: {
 			include: ['src/**/*.{test,spec}.{js,ts}']
 		},
 		server: {
-			port: PORT
+			port: PORT,
+			cors: {
+				origin: process.env.ORIGIN,
+				methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+				preflightContinue: false,
+				optionsSuccessStatus: 204
+			}
 		}
 	});
 };
