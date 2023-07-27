@@ -3,3 +3,32 @@ html,
 body {
 	@apply h-full;
 }
+
+.prose {
+	/* Modifying the H1 tag modifiers */
+	@apply prose-h1:text-3xl prose-h1:md:text-5xl;
+}
+
+.prose h1 {
+    @apply text-surface-900-50-token mt-10;
+}
+
+.prose h2 {
+    @apply text-surface-800-100-token;
+}
+
+.prose h3 {
+    @apply text-surface-700-200-token;
+}
+
+.prose p, li {
+    @apply text-surface-600-300-token;
+}
+
+.prose a {
+    @apply text-primary-500;
+}
+
+.prose a:hover {
+    @apply text-primary-400;
+}
