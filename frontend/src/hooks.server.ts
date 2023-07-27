@@ -19,6 +19,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.pb = pb;
 	event.locals.user = structuredClone(pb.authStore.model);
 
+    // check if url pathname in guest or auth only routes
+    const destRoute = allowRouteAccess(targetUrl.pathname, event.locals.user);
+
+    if (destRoute !== targetUrl.pathname) {
+        throw redirect(303, destRoute);
+    }
 
 	const response = await resolve(event);
 
@@ -28,12 +34,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 		pb.authStore.exportToCookie({ httpOnly: false, secure: false })
     );
 
-    // check if url pathname in guest or auth only routes
-    const destRoute = allowRouteAccess(targetUrl.pathname, event.locals.user);
-
-    if (destRoute !== targetUrl.pathname) {
-        throw redirect(303, destRoute);
-    }
 
     return response;
 };
