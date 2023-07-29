@@ -51,3 +51,4 @@ ports.txt
 */**/.env.*
 */**/vite.config.js.timestamp-*
 */**/vite.config.ts.timestamp-*
+/logs
