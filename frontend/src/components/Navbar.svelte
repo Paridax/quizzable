@@ -2,11 +2,8 @@
 	import { applyAction, enhance } from '$app/forms';
 	import { currentUser } from '$lib/pocketbase';
     import { pb } from '$lib/pocketbase';
-	import { redirect } from '@sveltejs/kit';
-    import { LightSwitch } from '@skeletonlabs/skeleton';
 
 	const guestLinks = {
-		Home: '/',
 		Login: '/login',
 		Register: '/register'
 	};
@@ -19,7 +16,9 @@
 
 <div class="w-full">
 	<nav class="flex items-center h-16 mx-auto container justify-between">
-		<h1>Quizzable</h1>
+        <a href="/" class="p-2 pl-0">
+            <h1>Quizzable</h1>
+        </a>
 		<ul class="flex items-center justify-between gap-5">
 			{#if $currentUser}
 				{#each Object.keys(userLinks) as link}
@@ -44,9 +43,6 @@
 					</li>
 				{/each}
 			{/if}
-            <li>
-                <LightSwitch />
-            </li>
 		</ul>
 	</nav>
 </div>
