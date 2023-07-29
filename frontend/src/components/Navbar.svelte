@@ -3,6 +3,7 @@
 	import { currentUser } from '$lib/pocketbase';
     import { pb } from '$lib/pocketbase';
 	import { redirect } from '@sveltejs/kit';
+    import { LightSwitch } from '@skeletonlabs/skeleton';
 
 	const guestLinks = {
 		Home: '/',
@@ -43,6 +44,9 @@
 					</li>
 				{/each}
 			{/if}
+            <li>
+                <LightSwitch />
+            </li>
 		</ul>
 	</nav>
 </div>
