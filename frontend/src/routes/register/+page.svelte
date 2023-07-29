@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { applyAction, enhance } from "$app/forms";
-    import { debounce } from "../utils";
+    import { debounce } from "$lib/utils";
 	import { pb } from "$lib/pocketbase";
 
 	let username = '';
