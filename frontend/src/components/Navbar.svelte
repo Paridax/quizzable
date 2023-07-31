@@ -16,7 +16,7 @@
 
 <div class="w-full">
 	<nav class="flex items-center h-16 mx-auto container justify-between">
-        <a href="/" class="p-2 pl-0">
+        <a href={$currentUser ? "/home" : "/"} class="p-2 pl-0">
             <h1>Quizzable</h1>
         </a>
 		<ul class="flex items-center justify-between gap-5">
