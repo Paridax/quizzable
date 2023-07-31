@@ -12,6 +12,13 @@ export const actions: Actions = {
 		console.log(data);
 
 		try {
+            if (!data.email) throw {
+                data: {
+                    data: {
+                        identity: {code: "required", message: "Cannot be blank."}
+                    }
+                }
+            }
 			await locals.pb.collection('users').create({
 				username: data.username,
 				email: data.email,
@@ -26,11 +33,9 @@ export const actions: Actions = {
 			// return error messages for each field, if no message, leave blank
 			return {
 				status: 400,
+                error: true,
 				body: {
-					username: '',
-					email: '',
-					password: '',
-					passwordConfirm: ''
+					...e.data
 				}
 			};
 		}
