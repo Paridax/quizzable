@@ -9,8 +9,6 @@ export const actions: Actions = {
 			passwordConfirm: string;
 		};
 
-		console.log(data);
-
 		try {
             if (!data.email) throw {
                 data: {
@@ -28,8 +26,6 @@ export const actions: Actions = {
 			});
 			await locals.pb.collection('users').authWithPassword(data.email, data.password);
 		} catch (e) {
-			console.error(e);
-			console.log(e.data);
 			// return error messages for each field, if no message, leave blank
 			return {
 				status: 400,
