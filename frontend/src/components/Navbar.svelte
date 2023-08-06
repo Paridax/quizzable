@@ -9,7 +9,9 @@
 	};
 
 	const userLinks = {
+        Create: '/create',
 		Home: '/home',
+        "My Sets": `/u/${$currentUser?.username}/sets`,
 		Profile: '/profile'
 	};
 </script>
@@ -17,7 +19,7 @@
 <div class="w-full">
 	<nav class="flex items-center h-16 mx-auto container justify-between">
         <a href={$currentUser ? "/home" : "/"} class="p-2 pl-0">
-            <h1>Quizzable</h1>
+            <h1 class="font-medium logo text-">Quizzable</h1>
         </a>
 		<ul class="flex items-center justify-between gap-5">
 			{#if $currentUser}
