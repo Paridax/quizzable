@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { currentUser } from '$lib/pocketbase';
-	import Loading from '../../components/Loading.svelte';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
 
 </script>
 
 {#if $currentUser}
-     <div class="lg:max-w h-full mx-auto">
+<div class="lg:max-w h-full mx-auto">
 	<div class="space-y-5 py-10">
 		<h2 class="h2 font-bold w-full text-center">Welcome, {$currentUser?.displayName}!</h2>
         <h2 class="h3 font-semibold w-full text-center text-gray-500">@{$currentUser?.username}</h2>
@@ -22,7 +22,7 @@
 </div>
 {:else}
 <div class="lg:max-w h-full mx-auto flex items-center justify-center">
-    <Loading />
+    <ProgressRadial value={undefined} meter="stroke-primary-500" track="stroke-primary-500/30" />
 </div>
 {/if}
 
