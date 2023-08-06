@@ -1,6 +1,6 @@
 const guestOnlyRoutes = ['/', '/login', '/register'];
 
-const authOnlyRoutes = ['/home'];
+const authOnlyRoutes = ['/home', '/create', '/profile'];
 
 
 const allowRouteAccess = (targetRoute, userIsAuthenticated) => {
