@@ -22,7 +22,8 @@ export const actions: Actions = {
 				email: data.email,
 				password: data.password,
 				passwordConfirm: data.passwordConfirm,
-				displayName: data.username
+				displayName: data.username,
+                authorization: "user"
 			});
 			await locals.pb.collection('users').authWithPassword(data.email, data.password);
 		} catch (e) {
