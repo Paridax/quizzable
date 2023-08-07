@@ -5,6 +5,7 @@
 	import Loading from './Loading.svelte';
 	import { goto } from '$app/navigation';
 	import EditQuizQuestion from './EditQuizQuestion.svelte';
+	import { onMount } from 'svelte';
 
     export let data: {
         setId: string;
@@ -47,6 +48,14 @@
         syncedWithServer = false;
     }
 
+    onMount(() => {
+        // loop through all the cards and set the correct_answers to itself (to refresh the children)
+        data.cards.forEach((card) => {
+            console.log(card.id);
+            card.correct_answers = [...card.correct_answers];
+        });
+    });
+
     const deletedCards: string[] = [];
 
     let card = {
@@ -59,7 +68,7 @@
         type: "single",
         text_answer: [],
         shown_answers: 2,
-        correct_answers: [1],
+        correct_answers: ["1"],
     }
 
     $: console.log(card);
@@ -99,11 +108,11 @@
             return;
         }
         toastStore.trigger({
-            message: "Saved your flashcards draft!",
+            message: "Saved your quiz draft!",
             background: "variant-filled-success",
             timeout: 5000
         });
-        syncCount = 1;
+        syncCount = 2;
         data.cards = response.body.cards;
         data.set = response.body.set;
         data.tags = response.body.tags;
@@ -164,7 +173,7 @@
             <button on:click|preventDefault={handlePublish} class="btn variant-filled-primary">Publish</button>
         </div>
     </div>
-    <form class="my-5 grid grid-cols-3 gap-5">
+    <div class="my-5 grid grid-cols-3 gap-5">
         <!-- TITLE -->
         <label class="label col-span-2">
             <span class="text-surface-600-300-token">Title<span class="text-error-500-400-token">*</span></span>
@@ -188,19 +197,18 @@
                 console.log(text);
                 // regex only allow alphanumeric characters
                 return /^[a-zA-Z0-9]+$/.test(text);
-            }} name="chips" placeholder="Enter keywords..." max={10} maxlength={15} on:invalid={(error) => {
+            }} name="chips" placeholder="Press enter to submit a word..." max={10} maxlength={15} on:invalid={(error) => {
                 console.log(error);
             }} />
         </label>
-    </form>
+    </div>
     <hr class="my-10" />
     <div class="flex flex-col gap-10">
         {#each data.cards as card, cardNum}
-            <form>
-                <div class="card card w-full p-5 group">
-                    <div class="flex justify-between mb-5">
-                        <h3 class="h3 font-bold">{cardNum + 1}</h3>
-                        <div class="opacity-0  justify-between gap-2.5 flex group-hover:opacity-100">
+            <div class="card card w-full p-5 group">
+                <div class="flex justify-between mb-5 items-center">
+                    <h3 class="h3 font-bold">Question {cardNum + 1}</h3>
+                    <div class="opacity-0  justify-between gap-2.5 flex group-hover:opacity-100">
                         <button class="btn variant-filled-secondary w-[2.625rem] h-[2.625rem]" on:click|preventDefault={() => {
                             console.log("move up");
                             if (cardNum != 0) {
@@ -210,12 +218,12 @@
                             data.cards = [...data.cards];
                             syncedWithServer = false;
                         }} disabled={cardNum == 0}>
-                        <span class="icon">
-                            <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
-                            </svg>
-                        </span>
-                    </button>
+                            <span class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                                </svg>
+                            </span>
+                        </button>
                         <button class="btn variant-filled-secondary w-[2.625rem] h-[2.625rem]" on:click|preventDefault={() => {
                             console.log("move down");
                             if (cardNum != data.cards.length - 1) {
@@ -225,34 +233,33 @@
                             data.cards = [...data.cards];
                             syncedWithServer = false;
                         }} disabled={cardNum == data.cards.length - 1}>
-                        <span class="icon">
-                            <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                            </svg>
-                        </span>
-                    </button>
+                            <span class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </span>
+                        </button>
                         <button class="btn variant-soft-error w-[2.625rem] h-[2.625rem]" on:click|preventDefault={() => {
                             deleteCard(cardNum);
                         }}>
-                        <span class="icon">
-                            <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                        </span>
-                    </button>
-                        </div>
+                            <span class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
+                            </span>
+                        </button>
                     </div>
-                    <EditQuizQuestion bind:card={card} />
                 </div>
-            </form>
+                <EditQuizQuestion bind:card={card} />
+            </div>
         {:else}
-            <div class="w-full h-24 flex items-center justify-center mb-10 pb-2.5">
-                <h1 class="font-semibold text-surface-500-400-token h-3">There are no questions in this quiz...</h1>
+            <div class="w-full h-24 flex items-center justify-center">
+                <h1 class="font-semibold text-surface-500-400-token">There are no questions in this quiz...</h1>
             </div>
         {/each}
         <form>
             <div class="card card variant-ringed-primary bg-surface-0-1000-token w-full p-5">
-                <div class="flex justify-between mb-5">
+                <div class="flex justify-between mb-5 items-center">
                     <h3 class="h3 font-bold">Create a New Question</h3>
                     <div class="flex justify-between gap-5">
                     <button class="btn variant-soft-primary" on:click|preventDefault={() => {
@@ -330,7 +337,7 @@
                     }}>Create Question</button>
                     </div>
                 </div>
-                <EditQuizQuestion bind:card={card} />
+                <EditQuizQuestion card={card} />
             </div>
         </form>
     </div>

@@ -10,7 +10,7 @@
 </script>
 
 <head>
-    <title>Create Flashcards | Quizzable</title>
+    <title>Create {data.set?.type === "quiz" ? "a Quiz" : "Flashcards"} | Quizzable</title>
 </head>
 {#if !data.set}
     <Loading />
