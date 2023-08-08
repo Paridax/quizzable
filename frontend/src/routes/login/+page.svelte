@@ -8,34 +8,49 @@
     let loading = false;
 </script>
 
+<head>
+    <title>Login | Quizzable</title>
+</head>
+
 <main>
-	<div>
-		<form class="flex flex-col gap-2 w-96 mx-auto my-24" on:submit={() => {loading = true;}} method="POST" use:enhance={() => {
-            return async ({result}) => {
-                loading = false;
-                console.log(result);
-                if (result?.data?.error) {
-                    error = result?.data?.message == "Failed to authenticate." ? "Invalid credentials." : result?.data?.message;
-                } else {
-                    error = "";
+    <div class="max-w-md mx-auto my-32">
+        <div class=" p-5 card w-full">
+            <h2 class="h2 font-bold w-full text-center mb-5">Login</h2>
+            <form class="flex flex-col gap-2.5 w-full" on:submit={() => {loading = true;}} method="POST" use:enhance={() => {
+                return async ({result}) => {
+                    loading = false;
+                    console.log(result);
+                    if (result?.data?.error) {
+                        error = result?.data?.message == "Failed to authenticate." ? "Invalid credentials." : result?.data?.message;
+                    } else {
+                        error = "";
+                    }
+                    pb.authStore.loadFromCookie(document.cookie);
+                    await applyAction(result);
                 }
-                pb.authStore.loadFromCookie(document.cookie);
-                await applyAction(result);
-            }
-        }}>
-		    <h3 class="h3 font-semibold w-full text-center">Log in to your Quizzable account!</h3>
-			<input type="text" name="email" class="input" bind:value={email} placeholder="Email or Username" />
-			<input type="password" name="password" class="input" bind:value={password} placeholder="Password" />
-            {#if error}<p class="text-sm font-semibold text-error-300-600-token text-center w-full">{error}</p>{/if}
-			<button class="btn variant-filled-primary">
-                {#if loading}
-                <Loading />
-                {:else}
-                Log in
-                {/if}
-            </button>
-		</form>
-	</div>
+            }}>
+                <label class="label">
+                    <span class="text-surface-600-300-token">Email or Username<span class="text-error-500-400-token">*</span></span>
+                    <input type="text" name="email" class="input" bind:value={email} placeholder="Type your login" />
+                </label>
+                <label class="label">
+                    <span class="text-surface-600-300-token">Password<span class="text-error-500-400-token">*</span></span>
+                    <input type="password" name="password" class="input" bind:value={password} placeholder="Type your password" />
+                </label>
+                <a href="/login/forgot" class="text-sm text-surface-600-300-token ml-auto mb-2.5">Forgot password?</a>
+                {#if error}<p class="text-sm font-semibold text-error-300-600-token text-center w-full">{error}</p>{/if}
+                <button class="btn variant-filled-primary">
+                    {#if loading}
+                    <Loading />
+                    {:else}
+                    Log in
+                    {/if}
+                </button>
+                <p class="text-sm text-surface-700-200-token text-center mt-2.5">Don't have an account? <a href="/register" class="anchor">Register</a></p>
+            </form>
+        </div>
+        <p class="text-xs text-surface-500-400-token text-center mt-2.5">By using Quizzable, you agree to our <a href="/legal/terms" class="anchor">Terms of Service</a> and <a href="/legal/privacy" class="anchor">Privacy Policy</a>.</p>
+    </div>
 </main>
 
 <style>
