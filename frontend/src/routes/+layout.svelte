@@ -7,7 +7,9 @@
 	import Navbar from '../components/Navbar.svelte';
 	import Footer from '../components/Footer.svelte';
 	import { Toast, toastStore, type ToastSettings, autoModeWatcher } from '@skeletonlabs/skeleton';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
+	import { currentUser, pb } from '$lib/pocketbase';
+	import { logout } from '$lib/utils';
 
     const cookieToast: ToastSettings = {
         message: 'We use cookies to improve your experience on our site. By using our site, you consent to cookies. <a href="/legal/cookies" class="anchor">Learn More</a>',
@@ -23,11 +25,67 @@
         }
     };
 
+    let verificationToast: undefined | string = undefined;
+
     onMount(() => {
         // Check if the user has accepted cookies
         if (window && window.localStorage.getItem('cookies') === null) {
             // If not, show the cookie consent banner
             toastStore.trigger(cookieToast);
+        }
+
+        if ($currentUser) {
+            if (!$currentUser?.verified) {
+                verificationToast = toastStore.trigger({
+                    message: 'Your account is not verified. Please check your email for a verification link.',
+                    timeout: 1000 * 1000, // 1000 seconds
+                    hideDismiss: true,
+                    action: {
+                        label: 'Resend Verification Email',
+                        response: async () => {
+                            await pb.collection('users').requestVerification($currentUser?.email);
+                            toastStore.trigger({
+                                message: 'Verification email sent.',
+                                timeout: 1000 * 5, // 5 seconds
+                            });
+                        }
+                    }
+                });
+            }
+
+            console.log("Subscribing to user data changes");
+            pb.collection('users').subscribe($currentUser?.id, (change) => {
+                if (change.action === "delete") {
+                    pb.collection('users').unsubscribe($currentUser?.id);
+                    console.log("Account deleted");
+                    logout();
+                }
+
+                if (change.action === "update") {
+                    console.log("User data changed", change);
+                    if ($currentUser?.verified === false && change.record?.verified === true) {
+                        toastStore.trigger({
+                            message: 'Your account has been verified.',
+                            background: 'variant-filled-success',
+                            timeout: 1000 * 5, // 5 seconds
+                        });
+                    }
+
+                    $currentUser = change.record;
+                    pb.collection('users').authRefresh();
+                    if (verificationToast) {
+                        toastStore.close(verificationToast);
+                        verificationToast = undefined;
+                    }
+                }
+            });
+        }
+    });
+
+    onDestroy(() => {
+        console.log("Unsubscribing from user data changes");
+        if ($currentUser) {
+            pb.collection('users').unsubscribe($currentUser?.id);
         }
     });
 </script>
