@@ -17,6 +17,8 @@
 	"devDependencies": {
 		"@floating-ui/dom": "^1.4.2",
 		"@playwright/test": "^1.28.1",
+		"@rgossiaux/svelte-headlessui": "^2.0.0",
+		"@rgossiaux/svelte-heroicons": "^0.1.2",
 		"@skeletonlabs/skeleton": "^1.8.0",
 		"@sveltejs/adapter-node": "^1.2.4",
 		"@sveltejs/kit": "^1.5.0",
@@ -28,7 +30,6 @@
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte": "^2.26.0",
-		"flowbite-svelte-icons": "^0.3.5",
 		"highlight.js": "^11.8.0",
 		"postcss": "^8.4.24",
 		"prettier": "^2.8.0",
