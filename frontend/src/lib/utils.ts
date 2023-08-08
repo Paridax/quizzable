@@ -1,3 +1,7 @@
+import { goto } from "$app/navigation";
+import { toastStore } from "@skeletonlabs/skeleton";
+import { pb } from "./pocketbase";
+
 function debounce(func: (value: any) => void, duration: number) {
 	let timer: NodeJS.Timeout | undefined = undefined;
 
@@ -57,16 +61,28 @@ function formAction(formAction: string) {
 	return url + formAction;
 }
 
-async function sendToServer(endpoint: string, data: object): Promise<ServerResponse> {
-	const formData = createForm(data);
-	const url = formAction(endpoint);
+async function sendToServer(endpoint: string, data?: object): Promise<ServerResponse> {
+    // if it starts with ? make it relative to the current url
+    if (endpoint.startsWith('?')) {
+        endpoint = window.location.pathname + endpoint;
+    }
 	// if fetch fails, forward the error to the caller
-	const response = await fetch(url, {
-		method: 'POST',
-		body: formData
-	});
+    let response = undefined;
+    if (data) {
+        const formData = createForm(data);
+        response = await fetch(endpoint, {
+            method: 'POST',
+            body: formData
+        });
+    } else {
+        response = await fetch(endpoint);
+    }
 
 	const json = await response.json();
+    if (json.type === "redirect") {
+        goto(json.location);
+        return json as ServerResponse;
+    }
     const badData = JSON.parse(json.data);
 	json.body = fixData(badData[0], badData);
 	delete json.data;
@@ -85,8 +101,9 @@ async function sendToServer(endpoint: string, data: object): Promise<ServerRespo
 
 type ServerResponse = {
 	status: number;
-	type: 'success' | 'fail' | 'error';
-	body: any;
+	type: 'success' | 'fail' | 'error' | 'redirect';
+	body?: any;
+    location?: string;
 };
 
 function fixData(data: number | string | object, array: Array<any>) {
@@ -108,4 +125,16 @@ function fixData(data: number | string | object, array: Array<any>) {
     }
 }
 
-export { debounce, createForm, formAction, sendToServer, readForm };
+async function logout() {
+    const request = await sendToServer('/logout', {});
+
+    if (request.type === "redirect" && request?.location === "/") {
+        pb.authStore.clear();
+    }
+
+    toastStore.trigger({
+        message: "You have been logged out",
+    });
+}
+
+export { debounce, createForm, formAction, sendToServer, readForm, logout };
