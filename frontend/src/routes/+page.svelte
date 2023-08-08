@@ -1,3 +1,7 @@
+<head>
+    <title>Start learning better | Quizzable</title>
+</head>
+
 <div class="lg:max-w h-full mx-auto">
 	<div class="space-y-5 py-10">
 		<h2 class="h2 font-bold w-full text-center">Welcome!</h2>

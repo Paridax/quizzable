@@ -4,6 +4,10 @@
 
 </script>
 
+<head>
+    <title>Home | Quizzable</title>
+</head>
+
 {#if $currentUser}
 <div class="lg:max-w h-full mx-auto">
 	<div class="space-y-5 py-10">

@@ -3,6 +3,10 @@
 
 </script>
 
+<head>
+    <title>Terms of Service | Quizzable</title>
+</head>
+
 <Article>
     <p>Last Updated: June 17, 2023</p>
 

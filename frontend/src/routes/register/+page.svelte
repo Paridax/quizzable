@@ -30,6 +30,10 @@
     }
 </script>
 
+<head>
+    <title>Create an account | Quizzable</title>
+</head>
+
 <main>
 	<div>
 		<form class="flex flex-col gap-2 w-96 mx-auto my-24" method="POST" on:submit={() => {loading = true;}} use:enhance={() => {
