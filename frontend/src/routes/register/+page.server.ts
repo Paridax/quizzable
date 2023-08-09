@@ -23,8 +23,10 @@ export const actions: Actions = {
 				password: data.password,
 				passwordConfirm: data.passwordConfirm,
 				displayName: data.username,
-                authorization: "user"
+                authorization: "user",
+                supporterLevel: "standard"
 			});
+            locals.pb.collection('users').requestVerification(data.email);
 			await locals.pb.collection('users').authWithPassword(data.email, data.password);
 		} catch (e) {
 			// return error messages for each field, if no message, leave blank
