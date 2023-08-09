@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { currentUser } from '$lib/pocketbase';
-	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import Loading from '../../components/Loading.svelte';
 
 </script>
 
@@ -25,8 +25,8 @@
 	</div>
 </div>
 {:else}
-<div class="lg:max-w h-full mx-auto flex items-center justify-center">
-    <ProgressRadial value={undefined} meter="stroke-primary-500" track="stroke-primary-500/30" />
+<div class="lg:max-w h-96 mx-auto flex items-center justify-center">
+    <Loading />
 </div>
 {/if}
 
