@@ -27,6 +27,70 @@
 
     let verificationToast: undefined | string = undefined;
 
+    let currentUserExists =  $currentUser ? true : false;
+    $: { if (currentUserExists !== ($currentUser ? true : false)) {
+        currentUserExists = $currentUser ? true : false;
+        refreshCurrentUserHooks();
+    }; console.log(currentUserExists); }
+
+    function refreshCurrentUserHooks() {
+        console.log("Refreshing user data hooks");
+        pb.collection('users').unsubscribe();
+        if (!$currentUser) {
+            if (verificationToast) {
+                toastStore.close(verificationToast);
+                verificationToast = undefined;
+            }
+            return;
+        }
+
+        if (!$currentUser?.verified) {
+            console.log("User is not verified");
+            verificationToast = toastStore.trigger({
+                message: 'Your account is not verified. Please check your email for a verification link.',
+                timeout: 1000 * 1000, // 1000 seconds
+                hideDismiss: true,
+                action: {
+                    label: 'Resend Verification Email',
+                    response: async () => {
+                        await pb.collection('users').requestVerification($currentUser?.email);
+                        toastStore.trigger({
+                            message: 'Verification email sent.',
+                            timeout: 1000 * 5, // 5 seconds
+                        });
+                    }
+                }
+            });
+        }
+
+        console.log("Subscribing to user data changes");
+        pb.collection('users').subscribe($currentUser.id, (change) => {
+            if (change.action === "delete") {
+                pb.collection('users').unsubscribe($currentUser?.id);
+                console.log("Account deleted");
+                logout();
+            }
+
+            if (change.action === "update") {
+                console.log("User data changed", change);
+                if ($currentUser?.verified === false && change.record?.verified === true) {
+                    toastStore.trigger({
+                        message: 'Your account has been verified.',
+                        background: 'variant-filled-success',
+                        timeout: 1000 * 5, // 5 seconds
+                    });
+                }
+
+                $currentUser = change.record;
+                pb.collection('users').authRefresh();
+                if (verificationToast) {
+                    toastStore.close(verificationToast);
+                    verificationToast = undefined;
+                }
+            }
+        });
+    }
+
     onMount(() => {
         // Check if the user has accepted cookies
         if (window && window.localStorage.getItem('cookies') === null) {
@@ -34,52 +98,7 @@
             toastStore.trigger(cookieToast);
         }
 
-        if ($currentUser) {
-            if (!$currentUser?.verified) {
-                verificationToast = toastStore.trigger({
-                    message: 'Your account is not verified. Please check your email for a verification link.',
-                    timeout: 1000 * 1000, // 1000 seconds
-                    hideDismiss: true,
-                    action: {
-                        label: 'Resend Verification Email',
-                        response: async () => {
-                            await pb.collection('users').requestVerification($currentUser?.email);
-                            toastStore.trigger({
-                                message: 'Verification email sent.',
-                                timeout: 1000 * 5, // 5 seconds
-                            });
-                        }
-                    }
-                });
-            }
-
-            console.log("Subscribing to user data changes");
-            pb.collection('users').subscribe($currentUser?.id, (change) => {
-                if (change.action === "delete") {
-                    pb.collection('users').unsubscribe($currentUser?.id);
-                    console.log("Account deleted");
-                    logout();
-                }
-
-                if (change.action === "update") {
-                    console.log("User data changed", change);
-                    if ($currentUser?.verified === false && change.record?.verified === true) {
-                        toastStore.trigger({
-                            message: 'Your account has been verified.',
-                            background: 'variant-filled-success',
-                            timeout: 1000 * 5, // 5 seconds
-                        });
-                    }
-
-                    $currentUser = change.record;
-                    pb.collection('users').authRefresh();
-                    if (verificationToast) {
-                        toastStore.close(verificationToast);
-                        verificationToast = undefined;
-                    }
-                }
-            });
-        }
+        refreshCurrentUserHooks();
     });
 
     onDestroy(() => {
@@ -94,9 +113,9 @@
 <Toast />
 
 <div class="app min-h-screen w-full">
-	<div class="w-full px-5">
+	<div class="w-full">
 		<Navbar />
-        <main>
+        <main class="px-5">
             <slot />
         </main>
         <Footer />
