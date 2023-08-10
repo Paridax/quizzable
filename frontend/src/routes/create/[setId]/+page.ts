@@ -9,7 +9,7 @@ export const load = async ({ params }) => {
     });
 
     if (set?.author !== pb.authStore.model?.id) {
-        throw redirect(303, `/q/${params.setId}`);
+        throw redirect(303, `/${params.setId}`);
     }
 
     if (set.draft === false) {
