@@ -203,7 +203,7 @@
                     // scroll to bottom of page after 1 frame, because the DOM hasn't updated yet
                     setTimeout(() => {
                         window.scrollTo(0, document.body.scrollHeight);
-                    }, 0);
+                    }, 1);
                 }}>Create Question</button>
                 </div>
             </div>
