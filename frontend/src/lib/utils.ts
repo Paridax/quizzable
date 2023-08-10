@@ -2,7 +2,7 @@ import { goto } from "$app/navigation";
 import { toastStore } from "@skeletonlabs/skeleton";
 import { pb } from "./pocketbase";
 
-function debounce(func: (value: any) => void, duration: number) {
+function constructDebounce(func: (value: any) => void, durationMS: number) {
 	let timer: NodeJS.Timeout | undefined = undefined;
 
 	return (value: any) => {
@@ -11,7 +11,7 @@ function debounce(func: (value: any) => void, duration: number) {
 		}
 		timer = setTimeout(() => {
 			func(value);
-		}, duration);
+		}, durationMS);
 	};
 }
 
@@ -137,4 +137,4 @@ async function logout() {
     });
 }
 
-export { debounce, createForm, formAction, sendToServer, readForm, logout };
+export { constructDebounce, createForm, formAction, sendToServer, readForm, logout };
