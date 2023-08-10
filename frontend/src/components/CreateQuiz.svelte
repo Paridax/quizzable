@@ -129,8 +129,10 @@
         }
 
         const response = await sendToServer("?/publish", {
+            set: data.set,
             setId: data.setId,
-            draft: data.set.draft
+            draft: data.set.draft,
+            cards: data.cards,
         });
 
         if (response.type !== "success") {
@@ -148,7 +150,7 @@
             timeout: 5000
         });
 
-        goto(`/q/${data.setId}`);
+        goto(`/${data.setId}`);
     }
 </script>
 
