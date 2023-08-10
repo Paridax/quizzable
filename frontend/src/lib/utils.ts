@@ -83,7 +83,13 @@ async function sendToServer(endpoint: string, data?: object): Promise<ServerResp
         goto(json.location);
         return json as ServerResponse;
     }
-    const badData = JSON.parse(json.data);
+    let badData = undefined;
+    try {
+        badData = JSON.parse(json.data);
+    } catch (e) {
+        console.error(e);
+        console.log(json.data);
+    }
 	json.body = fixData(badData[0], badData);
 	delete json.data;
 
