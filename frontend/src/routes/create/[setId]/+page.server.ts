@@ -1,6 +1,21 @@
 import { readForm } from '$lib/utils';
 import type { Actions } from '@sveltejs/kit';
 
+type ClientCard = {
+    id: string;
+    type: 'card' | 'single' | 'multi' | 'order' | 'text';
+    term_or_question: string;
+    definition_a1: string;
+    a2: string;
+    a3: string;
+    a4: string;
+    correct_answers: string[];
+    text_answer: string[];
+    shown_answers: number;
+    time_seconds: string;
+    new: boolean;
+}
+
 export const actions: Actions = {
 	savecards: async ({ locals, request }) => {
 		console.log('saving the set');
@@ -141,21 +156,6 @@ export const actions: Actions = {
 
 	savequiz: async ({ locals, request }) => {
 		console.log('saving the quiz');
-
-        type ClientCard = {
-            id: string;
-            type: 'card' | 'single' | 'multi' | 'order' | 'text';
-            term_or_question: string;
-            definition_a1: string;
-            a2: string;
-            a3: string;
-            a4: string;
-            correct_answers: string[];
-            text_answer: string[];
-            shown_answers: number;
-            time_seconds: string;
-            new: boolean;
-        }
 
 		const data = readForm(await request.formData()) as {
 			set: {
@@ -325,11 +325,28 @@ export const actions: Actions = {
 		console.log('publishing the set');
 
 		const data = readForm(await request.formData()) as {
+            set: {
+                id: string;
+                title: string;
+                description: string;
+                visibility: string;
+                tags: string[];
+                type: "quiz" | "card";
+            }
 			setId: string;
 			draft: boolean;
+            cards: ClientCard[];
 		};
 
 		console.log(data);
+
+        if (data.cards.length < 3) {
+            return {
+                type: 'error',
+                message: `You need at least 3 ${data.set.type === "quiz" ? "questions" : "cards"} to publish a Quizzable.`,
+                status: 400
+            };
+        }
 
 		if (!data.draft) {
 			return {
