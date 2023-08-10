@@ -3,6 +3,8 @@
     import { toastStore, InputChip } from '@skeletonlabs/skeleton';
 	import Loading from './Loading.svelte';
 	import { goto } from '$app/navigation';
+	import TextInput from './TextInput.svelte';
+	import TextArea from './TextArea.svelte';
 
     export let data: {
         setId: string;
@@ -12,7 +14,19 @@
             description: string;
             draft: boolean;
         };
-        cards: object[];
+        cards: {
+            id: string;
+            type: "card" | "single" | "multi" | "order" | "text";
+            term_or_question: string;
+            definition_a1: string;
+            a2: string;
+            a3: string;
+            a4: string;
+            correct_answers: string[];
+            shown_answers: number;
+            time_seconds: string;
+            new: boolean;
+        }[];
         tags: string[];
         syncedWithServer: boolean;
         synced: boolean;
@@ -97,7 +111,8 @@
         const response = await sendToServer("?/publish", {
             set: data.set,
             setId: data.setId,
-            draft: data.set.draft
+            draft: data.set.draft,
+            cards: data.cards,
         });
 
         if (response.type !== "success") {
@@ -115,7 +130,7 @@
             timeout: 5000
         });
 
-        goto(`/q/${data.setId}`);
+        goto(`/${data.setId}`);
     }
 </script>
 
@@ -142,31 +157,27 @@
     </div>
     <form class="my-5 grid grid-cols-3 gap-5">
         <!-- TITLE -->
-        <label class="label col-span-2">
-            <span class="text-surface-600-300-token">Title<span class="text-error-500-400-token">*</span></span>
+        <!-- <label class="label col-span-2"> -->
+            <!-- <span class="text-surface-600-300-token">Title<span class="text-error-500-400-token">*</span></span>
             <input type="text" bind:value={data.set["title"]} name="title" placeholder="Title" class="input" />
-        </label>
+        </label> -->
+        <TextInput label="Title" class="col-span-2" name="title" maxlength={50} required placeholder="New Flashcards Set" bind:value={data.set.title} />
         <label class="label col-span-1">
             <span class="text-surface-600-300-token">Visibility<span class="text-error-500-400-token">*</span></span>
-            <select class="select" bind:value={data.set["visibility"]}>
+            <select class="select" bind:value={data.set.visibility}>
                 <option value="public">Public</option>
                 <option value="unlisted">Unlisted</option>
                 <option value="private">Private</option>
             </select>
         </label>
-        <label class="label col-span-2">
-            <span class="text-surface-600-300-token">Description</span>
-            <textarea class="select w-full" placeholder="Enter a short description of your flashcards..." rows={2} bind:value={data.set["description"]} />
-        </label>
+        <TextArea class="col-span-2" rows={3} required label="Description" placeholder="Enter a description of your flashcards here..." debounce bind:value={data.set.description} maxlength={200} />
         <label class="label col-span-1">
             <span class="text-surface-600-300-token">Tags (a-z, 0-9)</span>
             <InputChip bind:value={data["tags"]} validation={(text) => {
                 console.log(text);
                 // regex only allow alphanumeric characters
                 return /^[a-zA-Z0-9]+$/.test(text);
-            }} name="chips" placeholder="Press enter to submit a tag..." max={10} maxlength={15} on:invalid={(error) => {
-                console.log(error);
-            }} />
+            }} name="chips" placeholder="Press enter to submit a tag..." max={10} maxlength={15} />
         </label>
     </form>
     <hr class="mt-10" />
@@ -240,14 +251,8 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-5">
-                        <label class="label col-span-1">
-                            <span class="text-surface-600-300-token">Term<span class="text-error-500-400-token">*</span></span>
-                            <input type="text" bind:value={card["term_or_question"]} name="question" placeholder="Question" class="input" />
-                        </label>
-                        <label class="label col-span-1">
-                            <span class="text-surface-600-300-token">Definition<span class="text-error-500-400-token">*</span></span>
-                            <input type="text" bind:value={card["definition_a1"]} name="answer" placeholder="Answer" class="input" />
-                        </label>
+                        <TextArea label="Term" required maxlength={100} bind:value={card.term_or_question} name="question" />
+                        <TextArea label="Definition" required maxlength={100} bind:value={card.definition_a1} name="answer" />
                     </div>
                 </div>
             </form>
@@ -295,14 +300,8 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-5">
-                    <label class="label col-span-1">
-                        <span class="text-surface-600-300-token">Term<span class="text-error-500-400-token">*</span></span>
-                        <input id="new-card-q" type="text" bind:value={card["term_or_question"]} name="question" placeholder="Quizzable" class="input" />
-                    </label>
-                    <label class="label col-span-1">
-                        <span class="text-surface-600-300-token">Definition<span class="text-error-500-400-token">*</span></span>
-                        <input type="text" bind:value={card["definition_a1"]} name="answer" placeholder="A website for studying flashcards" class="input" />
-                    </label>
+                    <TextArea label="Term" required maxlength={100} bind:value={card.term_or_question} name="question" />
+                    <TextArea label="Definition" required maxlength={100} bind:value={card.definition_a1} name="answer" />
                 </div>
             </div>
         </form>
