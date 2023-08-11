@@ -7,6 +7,7 @@
 	import TextInput from '../../../components/TextInput.svelte';
 	import TextArea from '../../../components/TextArea.svelte';
 	import EditQuiz from '../../../components/EditQuiz.svelte';
+	import { Dialog, Transition } from '@rgossiaux/svelte-headlessui';
 
     export let data: {
         setId: string;
@@ -44,6 +45,11 @@
     let title = "";
     let saveSuccessMessage = "";
     let quizOrFlashcards = data.set.type === "quiz" ? "Quiz" : "Flashcards";
+    let dialogTransition = false;
+    let discardDialog = false;
+    $: if (discardDialog === true) {
+        dialogTransition = true;
+    }
 
     if (data.set?.type === "quiz") {
         saveUrl = "?/savequiz";
@@ -105,14 +111,70 @@
         syncedWithServer = true;
         saving = false;
     }
+
+    async function handleDelete() {
+        console.log("deleting...");
+
+        const response = await sendToServer("?/delete", {
+            setId: data.setId,
+        });
+
+        if (response.type !== "success") {
+            toastStore.trigger({
+                message: response.body?.message,
+                background: "variant-filled-error",
+                timeout: 5000
+            });
+            return;
+        }
+
+        toastStore.trigger({
+            message: `Deleted your ${quizOrFlashcards.toLowerCase()}!`,
+            background: "variant-filled-success",
+            timeout: 5000
+        });
+
+        goto('/home');
+    }
 </script>
 
 <head>
     <title>{title} | Quizzable</title>
 </head>
 {#if !data.set}
-    <Loading />
+<Loading />
 {:else}
+
+<Dialog class="fixed top-0 left-0 w-screen h-screen" open={discardDialog} on:close={() => (discardDialog = false)}>
+    <div class="w-full h-full" on:click={() => dialogTransition = false} />
+
+    <Transition
+        show={dialogTransition}
+        enter="transition-all duration-100 ease-out"
+        enterFrom="opacity-0 scale-95"
+        enterTo="opacity-100 scale-100"
+        on:introend={() => console.log("opened")}
+        leave="duration-150"
+        leaveFrom="opacity-100 scale-100"
+        leaveTo="opacity-0 scale-95"
+        class="flex flex-col gap-2.5 absolute right-0 card mt-5 p-5 z-40 shadow-lg w-96 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl"
+        on:outroend={() => discardDialog = false}
+    >
+        <h3 class="h3 font-bold">Discard this Quizzable?</h3>
+        <p class="p">
+            Are you sure you want to discard your Quizzable? This action is permanent and <span class="text-error-500 font-bold">can never be undone</span>.
+        </p>
+        <div class="flex gap-5 w-full items-end mt-2">
+            <button on:click={() => discardDialog = false} class="btn grow variant-filled-secondary">
+                Cancel
+            </button>
+            <button on:click={() => handleDelete()} class="btn grow variant-filled-error">
+                Discard
+            </button>
+        </div>
+    </Transition>
+</Dialog>
+
 <div class="container mx-auto my-10">
     <div class="xl:px-72">
         <div class="flex items-center justify-between">
@@ -123,11 +185,14 @@
                             <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
                         </svg>
                     </span>
-                    <span>Back</span>
+                    <span>View Quizzable</span>
                 </a>
                 <h3 class="h3 font-bold">{title}</h3>
             </div>
             <div class="flex items-center justify-center gap-5">
+                <button on:click={() => discardDialog = true} class="btn variant-filled-secondary hover:variant-filled-error">
+                    Discard
+                </button>
                 <button on:click|preventDefault={() => handleSave(false)} disabled={syncedWithServer} class="btn variant-filled-secondary">
                 {#if saving}
                     <Loading />
@@ -135,7 +200,7 @@
                     {#if syncedWithServer}
                         Saved
                     {:else}
-                        Save now
+                        Save
                     {/if}
                 {/if}
                 </button>

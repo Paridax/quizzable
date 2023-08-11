@@ -374,5 +374,27 @@ export const actions: Actions = {
 			status: 200,
 			message: 'Published the set!'
 		};
-	}
+	},
+
+    delete: async ({ locals, request }) => {
+        const data = readForm(await request.formData()) as {
+            setId: string;
+        };
+
+        return await locals.pb.collection("quizzables").delete(data.setId)
+        .then(() => {
+            return {
+                status: 200,
+                message: "Deleted the set!"
+            };
+        })
+        .catch((e) => {
+            console.log(e);
+            return {
+                type: 'error',
+                message: 'There was a problem deleting the set. ' + e.message,
+                status: 500
+            };
+        });
+    }
 } satisfies Actions;

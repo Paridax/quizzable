@@ -7,6 +7,7 @@
 	import TextInput from '../../../components/TextInput.svelte';
 	import TextArea from '../../../components/TextArea.svelte';
 	import EditQuiz from '../../../components/EditQuiz.svelte';
+	import { Dialog, Transition } from '@rgossiaux/svelte-headlessui';
 
     export let data: {
         setId: string;
@@ -44,6 +45,11 @@
     let title = "";
     let saveSuccessMessage = "";
     let quizOrFlashcards = data.set.type === "quiz" ? "Quiz" : "Flashcards";
+    let discardDialog = false;
+    let dialogTransition = false;
+    $: if (discardDialog === true) {
+        dialogTransition = true;
+    }
 
     if (data.set?.type === "quiz") {
         saveUrl = "?/savequiz";
@@ -137,6 +143,31 @@
 
         goto(`/${data.setId}`);
     }
+
+    async function handleDelete() {
+        console.log("deleting...");
+
+        const response = await sendToServer("?/delete", {
+            setId: data.setId,
+        });
+
+        if (response.type !== "success") {
+            toastStore.trigger({
+                message: response.body?.message,
+                background: "variant-filled-error",
+                timeout: 5000
+            });
+            return;
+        }
+
+        toastStore.trigger({
+            message: `Deleted your ${quizOrFlashcards.toLowerCase()} draft!`,
+            background: "variant-filled-success",
+            timeout: 5000
+        });
+
+        goto('/home');
+    }
 </script>
 
 <head>
@@ -145,23 +176,57 @@
 {#if !data.set}
     <Loading />
 {:else}
+
+<Dialog class="fixed top-0 left-0 w-screen h-screen" open={discardDialog} on:close={() => (discardDialog = false)}>
+    <div class="w-full h-full" on:click={() => dialogTransition = false} />
+
+    <Transition
+        show={dialogTransition}
+        enter="transition-all duration-100 ease-out"
+        enterFrom="opacity-0 scale-95"
+        enterTo="opacity-100 scale-100"
+        on:introend={() => console.log("opened")}
+        leave="duration-150"
+        leaveFrom="opacity-100 scale-100"
+        leaveTo="opacity-0 scale-95"
+        class="flex flex-col gap-2.5 absolute right-0 card mt-5 p-5 z-40 shadow-lg w-96 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl"
+        on:outroend={() => discardDialog = false}
+    >
+        <h3 class="h3 font-bold">Discard Draft</h3>
+        <p class="p">
+            Are you sure you want to discard your draft? This action is permanent and <span class="text-error-500 font-bold">can never be undone</span>.
+        </p>
+        <div class="flex gap-5 w-full items-end mt-2">
+            <button on:click={() => discardDialog = false} class="btn grow variant-filled-secondary">
+                Cancel
+            </button>
+            <button on:click={() => handleDelete()} class="btn grow variant-filled-error">
+                Discard
+            </button>
+        </div>
+    </Transition>
+</Dialog>
+
 <div class="container mx-auto my-10">
     <div class="xl:px-72">
         <div class="flex items-center justify-between">
             <h3 class="h3 font-bold">{title}</h3>
             <div class="flex items-center justify-center gap-5">
-                <button on:click|preventDefault={() => handleSave(false)} disabled={syncedWithServer} class="btn variant-filled-secondary">
+                <button on:click={() => discardDialog = true} class="btn variant-filled-secondary hover:variant-filled-error">
+                    Discard Draft
+                </button>
+                <button on:click={() => handleSave(false)} disabled={syncedWithServer} class="btn variant-filled-secondary">
                 {#if saving}
                     <Loading />
                 {:else}
                     {#if syncedWithServer}
                         Saved
                     {:else}
-                        Save now
+                        Save
                     {/if}
                 {/if}
                 </button>
-                <button on:click|preventDefault={() => handlePublish()} class="btn variant-filled-primary">Publish</button>
+                <button on:click={() => handlePublish()} class="btn variant-filled-primary">Publish</button>
             </div>
         </div>
         <form class="my-5 grid grid-cols-3 gap-5">
