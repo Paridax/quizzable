@@ -25,14 +25,14 @@
 </head>
 
 {#if $currentUser}
-<div class="xl:px-72 container h-full mx-auto">
+<div class="xl:max-w-5xl container h-full mx-auto">
 	<div class="space-y-5 py-10">
 		<h2 class="h2 font-bold w-full text-center">Welcome to Quizzable, {$currentUser?.displayName}!</h2>
 	</div>
     <div class="mt-10 flex flex-col gap-5">
         <div>
             <h3 class="h3 font-semibold">Published Quizzables</h3>
-            <div class="grid grid-cols-3 gap-5 my-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 my-5">
                 {#each data.publishedSets as set}
                     <QuizzableCard {set} />
                 {:else}
@@ -44,7 +44,7 @@
         </div>
         <div>
             <h3 class="h3 font-semibold">Draft Quizzables</h3>
-            <div class="grid grid-cols-3 gap-5 my-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 my-5">
                 {#each data.draftSets as set}
                     <QuizzableCard {set} />
                 {/each}
