@@ -7,7 +7,7 @@
 
     } from '@rgossiaux/svelte-headlessui';
 	import { toastStore } from '@skeletonlabs/skeleton';
-	import { fade } from 'svelte/transition';
+	import Loading from './Loading.svelte';
 
 	const guestLinks = {
 		Login: '/login',
@@ -23,7 +23,7 @@
     }
 </script>
 
-<div class="w-full bg-surface-100-800-token shadow-lg px-5">
+<div class="w-full bg-surface-100-800-token shadow-xl px-5 z-30">
 	<nav class="flex items-center h-16 mx-auto container justify-between">
         <a href={$currentUser ? "/home" : "/"} class="p-2 pl-0">
             <h1 class="font-bold logo h3 text-primary-500">Quizzable</h1>
@@ -135,12 +135,16 @@
                 <!-- <li>
                     <button class="btn variant-soft-error" on:click={() => logout()}>Logout</button>
                 </li> -->
-			{:else}
+			{:else if $currentUser === false}
 				{#each Object.keys(guestLinks) as link}
 					<li>
 						<a class="btn variant-soft-primary" href={guestLinks[link]}>{link}</a>
 					</li>
 				{/each}
+            {:else}
+            <li>
+                <Loading />
+            </li>
 			{/if}
 		</ul>
 	</nav>

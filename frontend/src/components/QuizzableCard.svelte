@@ -20,7 +20,7 @@
     export let authorUsername = '';
 </script>
 
-<a href={set.draft ? `/create/${set.id}` : `/edit/${set.id}`} class="relative group hover:variant-filled-primary flex flex-col gap-3 justify-start  card block p-5 pt-24 card-hover">
+<a href={set.draft ? `/create/${set.id}` : `/${set.id}`} class="relative group hover:variant-filled-primary flex flex-col gap-2.5 justify-start  card block p-5 pt-24 card-hover">
     <div>
         <p class="text-xs uppercase font-semibold p">{set.type === 'quiz' ? 'Quiz' : 'Flashcards'}</p>
         <h1 class="h4 w-full font-semibold">{set.title}</h1>
