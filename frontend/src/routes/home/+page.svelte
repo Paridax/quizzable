@@ -36,7 +36,9 @@
                 {#each data.publishedSets as set}
                     <QuizzableCard {set} />
                 {:else}
-                    <p>No published sets</p>
+                    <div class="col-span-3 py-24 flex items-center justify-center">
+                        <p class="p">No published sets...</p>
+                    </div>
                 {/each}
             </div>
         </div>
@@ -45,10 +47,8 @@
             <div class="grid grid-cols-3 gap-5 my-5">
                 {#each data.draftSets as set}
                     <QuizzableCard {set} />
-                {:else}
-                    <p>No draft sets</p>
                 {/each}
-                <a href="/create" class="hover:variant-filled-primary group flex flex-col items-center justify-center gap-2 card p-16 card-hover relative">
+                <a href="/create" class="hover:variant-filled-primary group flex flex-col items-center justify-center gap-2 card py-24 card-hover relative">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>

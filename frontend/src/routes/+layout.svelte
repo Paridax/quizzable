@@ -112,10 +112,10 @@
 <svelte:head>{@html `<script>${autoModeWatcher.toString()} autoModeWatcher();</script>`}</svelte:head>
 <Toast />
 
-<div class="app min-h-screen w-full">
-	<div class="w-full">
+<div class="app w-full">
+	<div class="min-h-screen w-full flex flex-col h-full">
 		<Navbar />
-        <main class="px-5">
+        <main class="px-5 grow flex flex-col">
             <slot />
         </main>
         <Footer />

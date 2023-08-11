@@ -1,12 +1,13 @@
 <script lang="ts">
-	import { currentUser, pb } from '$lib/pocketbase';
+	import { currentUser } from '$lib/pocketbase';
 	import { logout } from '$lib/utils';
-    import { ChevronDownIcon } from '@rgossiaux/svelte-heroicons/outline';
 
     import {
-        Menu, MenuButton, MenuItems, MenuItem
+        Menu, MenuButton, MenuItems, MenuItem, Transition
+
     } from '@rgossiaux/svelte-headlessui';
 	import { toastStore } from '@skeletonlabs/skeleton';
+	import { fade } from 'svelte/transition';
 
 	const guestLinks = {
 		Login: '/login',
@@ -31,19 +32,19 @@
 			{#if $currentUser}
                 <li>
                     {#if $currentUser.verified}
-                        <a class="btn text-surface-900-50-token hover:variant-soft-primary" href="/create">Create</a>
+                        <a class="btn hidden md:block text-surface-900-50-token hover:variant-soft-primary" href="/create">Create</a>
                     {:else}
-                        <button class="btn text-surface-900-50-token hover:variant-soft-primary" on:click={remindUserToVerify}>Create</button>
+                        <button class="btn hidden md:block text-surface-900-50-token hover:variant-soft-primary" on:click={remindUserToVerify}>Create</button>
                     {/if}
                 </li>
                 <li>
-                    <a class="btn text-surface-900-50-token hover:variant-soft-primary" href="/home">Home</a>
+                    <a class="btn hidden md:block text-surface-900-50-token hover:variant-soft-primary" href="/home">Home</a>
                 </li>
                 <li>
-                    <a class="btn variant-soft-warning hover:variant-filled-warning" href="/plans">Upgrade</a>
+                    <a class="btn hidden md:block variant-soft-warning hover:variant-filled-warning" href="/plans">Upgrade</a>
                 </li>
                 <li>
-                    <Menu class="relative">
+                    <Menu class="relative" let:open>
                         <MenuButton class="btn variant-soft-secondary hover:variant-soft-primary" let:open>
                             <span>{$currentUser.displayName}</span>
                             <span class="flex items-center justify-center">
@@ -52,13 +53,48 @@
                                 </svg>
                             </span>
                         </MenuButton>
-                        <MenuItems class="flex flex-col gap-2.5 absolute right-0 card mt-2.5 p-5">
+                        <Transition
+                            show={open}
+                            enter="transition-all duration-100 ease-out"
+                            enterFrom="opacity-0 translate-y-2"
+                            enterTo="opacity-100 translate-y-0"
+                            leave="duration-150"
+                            leaveFrom="opacity-100 translate-y-0"
+                            leaveTo="opacity-0 translate-y-2"
+                            class="flex flex-col gap-2.5 absolute right-0 card mt-5 p-5 z-40 shadow-lg"
+                        >
                             <div class="px-4 mb-2.5">
                                 <h1 class="text-lg h4 font-semibold text-surface-900-50-token">{$currentUser.displayName}</h1>
                                 <p class="text-xs font-medium text-surface-600-300-token">@{$currentUser.username}</p>
                             </div>
+                            <div class="flex md:hidden flex-col gap-2.5">
+                                <MenuItem let:active>
+                                    <a href="/plans" class:variant-filled-warning={active} class:variant-soft-warning={!active} class="btn text-left w-full">
+                                        <div class="w-full">
+                                            Upgrade
+                                        </div>
+                                    </a>
+                                </MenuItem>
+                                <hr />
+                                <div class="flex flex-col gap-0.5">
+                                    <MenuItem let:active>
+                                        <a href="/create" class:variant-soft-secondary={active} class="btn text-left w-full">
+                                            <div class="w-full">
+                                                Create
+                                            </div>
+                                        </a>
+                                    </MenuItem>
+                                    <MenuItem let:active>
+                                        <a href="/home" class:variant-soft-secondary={active} class="btn text-left w-full">
+                                            <div class="w-full">
+                                                Home
+                                            </div>
+                                        </a>
+                                    </MenuItem>
+                                </div>
+                            </div>
                             <hr />
-                            <div class="flex flex-col">
+                            <div class="flex flex-col gap-0.5">
                                 <MenuItem let:active>
                                     <a href="/profile" class:variant-soft-secondary={active} class="btn text-left w-full">
                                         <div class="w-full">
@@ -93,7 +129,7 @@
                                 </button>
                                 </MenuItem>
                             </div>
-                        </MenuItems>
+                        </Transition>
                     </Menu>
                 </li>
                 <!-- <li>

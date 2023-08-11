@@ -1,5 +1,5 @@
-<div class="h-20 w-full pb-5">
-    <footer class="lg:max-w mx-auto h-full p-10 flex flex-wrap items-center justify-center gap-10 mb-5">
+<div class="w-full">
+    <footer class="lg:max-w mx-auto h-full p-10 flex flex-wrap items-center justify-center gap-10">
         <a class="text-sm text-surface-500-400-token hover:text-surface-600-300-token whitespace-nowrap" href="/legal/terms">Terms of Service</a>
         <a class="text-sm text-surface-500-400-token hover:text-surface-600-300-token whitespace-nowrap" href="/legal/privacy">Privacy Policy</a>
         <a class="text-sm text-surface-500-400-token hover:text-surface-600-300-token whitespace-nowrap" href="/legal/cookies">Cookie Policy</a>
