@@ -215,7 +215,7 @@
                 <button on:click={() => discardDialog = true} class="btn variant-filled-secondary hover:variant-filled-error">
                     Discard Draft
                 </button>
-                <button on:click={() => handleSave(false)} disabled={syncedWithServer} class="btn variant-filled-secondary">
+                <button on:click={() => handleSave(false)} disabled={saving ? saving : syncedWithServer} class="btn variant-filled-secondary">
                 {#if saving}
                     <Loading />
                 {:else}

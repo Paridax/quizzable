@@ -51,33 +51,10 @@ export const actions: Actions = {
 		if (data.cards.length < 3) {
 			return {
 				type: 'error',
-				message: 'You don\'t have enough cards. You need at least 3.',
+				message: "You don't have enough cards. You need at least 3.",
 				status: 400
 			};
 		}
-
-		// update the set
-		const set = {
-			title: data.set.title.trim(),
-			description: data.set.description.trim(),
-			visibility: data.set.visibility,
-			tags: data.tags.join(',') // convert the array to a string
-		};
-
-		console.log('updating set');
-		const updatedSet = await locals.pb
-			.collection('quizzables')
-			.update(data.set.id, set)
-			.catch((e) => {
-				console.log(e);
-				return {
-					type: 'error',
-					message: 'There was a problem updating the set. ' + e.message,
-					status: 500
-				};
-			});
-
-		data.set = structuredClone(updatedSet);
 
 		async function updateCard(card, index: number) {
 			console.log(index, card.id);
@@ -153,6 +130,30 @@ export const actions: Actions = {
 				});
 		});
 
+		// update the set
+		const set = {
+			title: data.set.title.trim(),
+			description: data.set.description.trim(),
+			visibility: data.set.visibility,
+			tags: data.tags.join(','), // convert the array to a string
+            study_items: data.cards.map((card) => card.id)
+		};
+
+		console.log('updating set');
+		const updatedSet = await locals.pb
+        .collection('quizzables')
+        .update(data.set.id, set)
+        .catch((e) => {
+            console.log(e);
+            return {
+                type: 'error',
+                message: 'There was a problem updating the set. ' + e.message,
+                status: 500
+            };
+        });
+
+		data.set = structuredClone(updatedSet);
+
 		return {
 			status: 200,
 			setId: data.set.id,
@@ -187,41 +188,13 @@ export const actions: Actions = {
 			};
 		}
 
-        if (data.cards.length < 3) {
-            return {
-                type: 'error',
-                message: "You don't have enough questions. You need at least 3.",
-                status: 400
-            };
-        }
-
-		// update the set
-		const set = {
-			title: data.set.title.trim(),
-			description: data.set.description.trim(),
-			visibility: data.set.visibility,
-			tags: data.tags.join(',') // convert the array to a string
-		};
-
-		console.log('updating quiz');
-        try {
-            const updatedSet = await locals.pb
-                .collection('quizzables')
-                .update(data.set.id, set)
-                .catch((e) => {
-                    console.log(e);
-                    throw {
-                        type: 'error',
-                        message: 'There was a problem updating the quiz. ' + e.message,
-                        status: 500
-                    };
-                });
-
-                data.set = structuredClone(updatedSet);
-        } catch (e) {
-            return e;
-        }
-
+		if (data.cards.length < 3) {
+			return {
+				type: 'error',
+				message: "You don't have enough questions. You need at least 3.",
+				status: 400
+			};
+		}
 
 		async function updateCard(card: ClientCard, index: number) {
 			console.log(index, card.id);
@@ -248,7 +221,7 @@ export const actions: Actions = {
 			if (
 				!cardData.term_or_question ||
 				!cardData.definition_a1 ||
-				(card.type !== "text" && !cardData.a2) ||
+				(card.type !== 'text' && !cardData.a2) ||
 				(card.shown_answers >= 3 && !cardData.a3) ||
 				(card.shown_answers >= 4 && !cardData.a4)
 			) {
@@ -327,6 +300,34 @@ export const actions: Actions = {
 					};
 				});
 		});
+
+		// update the set
+		const set = {
+			title: data.set.title.trim(),
+			description: data.set.description.trim(),
+			visibility: data.set.visibility,
+			tags: data.tags.join(','), // convert the array to a string
+            study_items: data.cards.map((card) => card.id)
+		};
+
+		console.log('updating quiz');
+		try {
+			const updatedSet = await locals.pb
+				.collection('quizzables')
+				.update(data.set.id, set)
+				.catch((e) => {
+					console.log(e);
+					throw {
+						type: 'error',
+						message: 'There was a problem updating the quiz. ' + e.message,
+						status: 500
+					};
+				});
+
+			data.set = structuredClone(updatedSet);
+		} catch (e) {
+			return e;
+		}
 
 		return {
 			status: 200,

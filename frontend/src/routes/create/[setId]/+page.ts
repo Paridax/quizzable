@@ -38,7 +38,7 @@ export const load = async ({ params }) => {
 	return {
 		setId: params.setId,
 		set: set,
-		cards: cards,
+		cards: cards.sort((a, b) => a.position - b.position),
 		tags: set.tags.length > 0 ? set.tags.split(',') : [],
 		synced: true
 	};
