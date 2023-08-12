@@ -25,7 +25,7 @@
 </head>
 
 {#if $currentUser}
-<div class="xl:max-w-5xl container h-full mx-auto">
+<div class="xl:max-w-5xl container h-full mx-auto px-5">
 	<div class="space-y-5 py-10">
 		<h2 class="h2 font-bold w-full text-center">Welcome to Quizzable, {$currentUser?.displayName}!</h2>
 	</div>
