@@ -46,7 +46,7 @@
                 <li>
                     <Menu class="relative" let:open>
                         <MenuButton class="btn variant-soft-secondary hover:variant-soft-primary" let:open>
-                            <span>{$currentUser.displayName}</span>
+                            <span>Account</span>
                             <span class="flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 transition-transform duration-200 ease-in-out" class:rotate-180={open}>
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -61,12 +61,12 @@
                             leave="duration-150"
                             leaveFrom="opacity-100 translate-y-0"
                             leaveTo="opacity-0 translate-y-2"
-                            class="flex flex-col gap-2.5 absolute right-0 card mt-5 p-5 z-40 shadow-lg"
+                            class="flex flex-col gap-2.5 absolute right-0 card mt-5 p-5 z-40 w-64 shadow-lg"
                         >
-                            <div class="px-4 mb-2.5">
-                                <h1 class="text-lg h4 font-semibold text-surface-900-50-token">{$currentUser.displayName}</h1>
+                            <a href={`/user/${$currentUser.username}`} class="px-4 mb-2.5 w-full">
+                                <h1 class="text-lg h4 font-semibold text-surface-900-50-token truncate">{$currentUser.displayName}</h1>
                                 <p class="text-xs font-medium text-surface-600-300-token">@{$currentUser.username}</p>
-                            </div>
+                            </a>
                             <div class="flex md:hidden flex-col gap-2.5">
                                 <MenuItem let:active>
                                     <a href="/plans" class:variant-filled-warning={active} class:variant-soft-warning={!active} class="btn text-left w-full">
@@ -135,7 +135,7 @@
                 <!-- <li>
                     <button class="btn variant-soft-error" on:click={() => logout()}>Logout</button>
                 </li> -->
-			{:else if $currentUser === false}
+			{:else if !$currentUser}
 				{#each Object.keys(guestLinks) as link}
 					<li>
 						<a class="btn variant-soft-primary" href={guestLinks[link]}>{link}</a>

@@ -143,15 +143,37 @@ async function logout() {
     });
 }
 
+// I want 4 significant figures
+// 9,999
+// 12.24k
+// 103.4k
+// 1.234m
+// 12.34m
+// 123.4m
+// 1.234b
 function shorthandNumber(value: number) {
     if (value < 1000) {
         return value.toString();
+    } else if (value < 10000) {
+        return value.toString()[0] + "," + value.toString().slice(1);
+    } else if (value < 100000) {
+        return (value / 1000).toFixed(2) + "k";
     } else if (value < 1000000) {
         return (value / 1000).toFixed(1) + "k";
+    } else if (value < 10000000) {
+        return (value / 1000000).toFixed(3) + "m";
+    } else if (value < 100000000) {
+        return (value / 1000000).toFixed(2) + "m";
     } else if (value < 1000000000) {
         return (value / 1000000).toFixed(1) + "m";
+    } else if (value < 10000000000) {
+        return (value / 1000000000).toFixed(3) + "b";
+    } else if (value < 100000000000) {
+        return (value / 1000000000).toFixed(2) + "b";
     } else if (value < 1000000000000) {
         return (value / 1000000000).toFixed(1) + "b";
+    } else {
+        return value.toString();
     }
 }
 

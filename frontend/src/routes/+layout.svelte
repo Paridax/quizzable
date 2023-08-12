@@ -7,6 +7,9 @@
 	import Navbar from '../components/Navbar.svelte';
 	import Footer from '../components/Footer.svelte';
 	import { Toast, toastStore, type ToastSettings, autoModeWatcher } from '@skeletonlabs/skeleton';
+    import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+    import { storePopup } from '@skeletonlabs/skeleton';
+    storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 	import { onMount, onDestroy } from 'svelte';
 	import { currentUser, pb } from '$lib/pocketbase';
 	import { logout } from '$lib/utils';
@@ -113,9 +116,9 @@
 <Toast />
 
 <div class="app w-full">
-	<div class="min-h-screen w-full flex flex-col h-full">
+	<div class="min-h-screen w-full flex flex-col h-full overflow-x-hidden">
 		<Navbar />
-        <main class="px-5 grow flex flex-col">
+        <main class="grow flex flex-col">
             <slot />
         </main>
         <Footer />
