@@ -4,7 +4,7 @@ import { redirect, error } from '@sveltejs/kit';
 
 export const load = async ({ params,  }) => {
     const set = (await pb
-			.collection('public_quizzables')
+			.collection('publicQuizzables')
 			.getOne(params.setId)
 			.catch((e) => {
 				console.log(e);
@@ -15,7 +15,7 @@ export const load = async ({ params,  }) => {
         throw redirect(303, `/create/${params.setId}`);
     }
 
-    const cards = await pb.collection('study_items').getFullList({
+    const cards = await pb.collection('studyItems').getFullList({
 			filter: `quizzable = "${params.setId}" && type ${set.type === "quiz" ? "!" : ""}= "card"`, // Look for all non-cards if quiz
             sort: 'position'
 		})
@@ -24,7 +24,7 @@ export const load = async ({ params,  }) => {
             throw redirect(303, '/home');
         }) as Card[];
 
-    const author = await pb.collection('public_users').getOne(typeof set.author === 'string' ? set.author : set.author.id)
+    const author = await pb.collection('publicUsers').getOne(typeof set.author === 'string' ? set.author : set.author.id)
     .catch(e => {
         console.log(e);
         return {
@@ -39,7 +39,7 @@ export const load = async ({ params,  }) => {
     if (set.type === "quiz") {
         cards.forEach(card => {
             if (card.type === "text") {
-                card.text_answer = card.definition_a1.split(',');
+                card.text_answer = card.definitionA1.split(',');
             } else {
                 card.text_answer = [];
             }
@@ -57,9 +57,9 @@ export const load = async ({ params,  }) => {
 					.toString()
 					.padStart(2, '0')}-${(dateCutoff.getDate()).toString().padStart(2, '0')}`;
         console.log(`user = "${pb.authStore.model.id}" && quizzable = "${params.setId} && created > "${dateCutoffString}"`);
-        await pb.collection('quizzable_views').getFirstListItem(`user = "${pb.authStore.model.id}" && quizzable = "${params.setId}" && created > "${dateCutoffString}"`)
+        await pb.collection('quizzableViews').getFirstListItem(`user = "${pb.authStore.model.id}" && quizzable = "${params.setId}" && created > "${dateCutoffString}"`)
         .catch(() => {
-            pb.collection('quizzable_views')
+            pb.collection('quizzableViews')
             .create({
                 user: pb.authStore.model?.id,
                 quizzable: params.setId

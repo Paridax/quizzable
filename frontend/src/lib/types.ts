@@ -14,14 +14,14 @@ interface User extends Record {
 interface Card extends Record {
     id: string;
     type: 'card' | 'single' | 'multi' | 'order' | 'text';
-    term_or_question: string;
-    definition_a1: string;
+    termOrQuestion: string;
+    definitionA1: string;
     a2: string;
     a3: string;
     a4: string;
-    correct_answers: string[];
-    shown_answers: number;
-    time_seconds: string;
+    correctAnswers: string[];
+    shownAnswers: number;
+    timeSeconds: string;
     new: boolean;
 }
 
@@ -40,4 +40,14 @@ interface PublicSet extends Set {
 	likes: number;
 };
 
-export type { User, Card, Set, PublicSet };
+interface SoloQuiz extends Record {
+    quizzable: string | Set;
+    user: string | User;
+    questions: string[];
+    currentQuestion: number;
+    completedQuiz: boolean;
+    completedQuestions: string[];
+    userIsTaking: boolean;
+}
+
+export type { User, Card, Set, PublicSet, SoloQuiz };

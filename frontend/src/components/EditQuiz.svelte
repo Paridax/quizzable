@@ -18,14 +18,14 @@
         cards: {
             id: string;
             type: "card" | "single" | "multi" | "order" | "text";
-            term_or_question: string;
-            definition_a1: string;
+            termOrQuestion: string;
+            definitionA1: string;
             a2: string;
             a3: string;
             a4: string;
-            correct_answers: string[];
-            shown_answers: number;
-            time_seconds: string;
+            correctAnswers: string[];
+            shownAnswers: number;
+            timeSeconds: string;
             new: boolean;
         }[];
         tags: string[];
@@ -39,25 +39,25 @@
     export let deletedCards: string[] = [];
 
     onMount(() => {
-        // loop through all the cards and set the correct_answers to itself (to refresh the children)
+        // loop through all the cards and set the correctAnswers to itself (to refresh the children)
         data.cards.forEach((card) => {
             console.log(card.id);
-            card.correct_answers = [...card.correct_answers];
+            card.correctAnswers = [...card.correctAnswers];
         });
     });
 
 
     let question = {
-        term_or_question: "",
-        definition_a1: "",
+        termOrQuestion: "",
+        definitionA1: "",
         a2: "",
         a3: "",
         a4: "",
-        time_seconds: "30",
+        timeSeconds: "30",
         type: "single",
         text_answer: [],
-        shown_answers: 2,
-        correct_answers: ["1"],
+        shownAnswers: 2,
+        correctAnswers: ["1"],
     }
 
     $: console.log(question);
@@ -134,23 +134,23 @@
                 <div class="flex justify-between gap-5">
                 <button class="btn variant-soft-primary" on:click|preventDefault={() => {
                     console.log("new card");
-                    if (!question["term_or_question"].trim().length) {
+                    if (!question["termOrQuestion"].trim().length) {
                         toastStore.trigger({ message: 'Please fill out all required fields.', background: 'variant-filled-error' });
                         return;
                     }
 
                     if (question.type === "single" || question.type === "multi" || question.type === "order") {
-                        if (!question["definition_a1"].trim().length || !question["a2"].trim().length) {
+                        if (!question["definitionA1"].trim().length || !question["a2"].trim().length) {
                             toastStore.trigger({ message: 'Please fill out all required fields.', background: 'variant-filled-error' });
                             return;
                         }
 
-                        if (question.shown_answers > 2 && !question["a3"].trim().length) {
+                        if (question.shownAnswers > 2 && !question["a3"].trim().length) {
                             toastStore.trigger({ message: 'Please fill out all required fields.', background: 'variant-filled-error' });
                             return;
                         }
 
-                        if (question.shown_answers > 3 && !question["a4"].trim().length) {
+                        if (question.shownAnswers > 3 && !question["a4"].trim().length) {
                             toastStore.trigger({ message: 'Please fill out all required fields.', background: 'variant-filled-error' });
                             return;
                         }
@@ -165,30 +165,30 @@
 
                     const newCard = {
                         "id": Math.round(Math.random() * 1000000),
-                        "term_or_question": question["term_or_question"].trim(),
-                        "definition_a1": question["definition_a1"].trim(),
+                        "termOrQuestion": question["termOrQuestion"].trim(),
+                        "definitionA1": question["definitionA1"].trim(),
                         "a2": question["a2"].trim(),
                         "a3": question["a3"].trim(),
                         "a4": question["a4"].trim(),
-                        "time_seconds": question["time_seconds"],
+                        "timeSeconds": question["timeSeconds"],
                         "type": question["type"],
                         "text_answer": question["text_answer"],
-                        "shown_answers": question["shown_answers"],
-                        "correct_answers": question["correct_answers"],
+                        "shownAnswers": question["shownAnswers"],
+                        "correctAnswers": question["correctAnswers"],
                         "new": true
                     };
 
                     question = {
-                        term_or_question: "",
-                        definition_a1: "",
+                        termOrQuestion: "",
+                        definitionA1: "",
                         a2: "",
                         a3: "",
                         a4: "",
-                        time_seconds: question.time_seconds,
+                        timeSeconds: question.timeSeconds,
                         type: question.type,
                         text_answer: [],
-                        shown_answers: 2,
-                        correct_answers: ["1"],
+                        shownAnswers: 2,
+                        correctAnswers: ["1"],
                     };
 
                     data.cards = [

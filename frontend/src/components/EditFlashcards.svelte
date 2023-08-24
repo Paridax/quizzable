@@ -5,14 +5,14 @@
     interface Card {
         id: string;
         type: "card" | "single" | "multi" | "order" | "text";
-        term_or_question: string;
-        definition_a1: string;
+        termOrQuestion: string;
+        definitionA1: string;
         a2: string;
         a3: string;
         a4: string;
-        correct_answers: string[];
-        shown_answers: number;
-        time_seconds: string;
+        correctAnswers: string[];
+        shownAnswers: number;
+        timeSeconds: string;
         new: boolean;
     };
 
@@ -36,8 +36,8 @@
     export let deletedCards: string[] = [];
 
     let card = {
-        term_or_question: "",
-        definition_a1: "",
+        termOrQuestion: "",
+        definitionA1: "",
     } as Card;
 
     const deleteCard = (index: number) => {
@@ -57,9 +57,9 @@
         if (data.cards.length == 0) return;
 
         data.cards.forEach((card) => {
-            const temp = card.term_or_question;
-            card.term_or_question = card.definition_a1;
-            card.definition_a1 = temp;
+            const temp = card.termOrQuestion;
+            card.termOrQuestion = card.definitionA1;
+            card.definitionA1 = temp;
         });
 
         data.cards = [...data.cards];
@@ -135,20 +135,20 @@
                 <div class="flex justify-between gap-5">
                 <button class="btn variant-soft-primary" on:click|preventDefault={() => {
                     console.log("new card");
-                    if (!card["term_or_question"].trim().length || !card["definition_a1"].trim().length) {
+                    if (!card["termOrQuestion"].trim().length || !card["definitionA1"].trim().length) {
                         toastStore.trigger({ message: 'Please fill out all required fields.', background: 'variant-filled-error' });
                         return;
                     }
 
                     const newCard = {
                         "id": Math.round(Math.random() * 1000000),
-                        "term_or_question": card["term_or_question"].trim(),
-                        "definition_a1": card["definition_a1"].trim(),
+                        "termOrQuestion": card["termOrQuestion"].trim(),
+                        "definitionA1": card["definitionA1"].trim(),
                         "new": true
                     };
 
-                    card["term_or_question"] = "";
-                    card["definition_a1"] = "";
+                    card["termOrQuestion"] = "";
+                    card["definitionA1"] = "";
 
                     data.cards = [
                         ...data.cards,

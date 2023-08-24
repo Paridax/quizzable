@@ -4,15 +4,15 @@ import type { Actions } from '@sveltejs/kit';
 type ClientCard = {
     id: string;
     type: 'card' | 'single' | 'multi' | 'order' | 'text';
-    term_or_question: string;
-    definition_a1: string;
+    termOrQuestion: string;
+    definitionA1: string;
     a2: string;
     a3: string;
     a4: string;
-    correct_answers: string[];
+    correctAnswers: string[];
     text_answer: string[];
-    shown_answers: number;
-    time_seconds: string;
+    shownAnswers: number;
+    timeSeconds: string;
     new: boolean;
 }
 
@@ -30,8 +30,8 @@ export const actions: Actions = {
 			};
 			cards: {
 				id: string;
-				term_or_question: string;
-				definition_a1: string;
+				termOrQuestion: string;
+				definitionA1: string;
 				position: number;
 				new: true | undefined;
 			}[];
@@ -59,11 +59,11 @@ export const actions: Actions = {
 		async function updateCard(card, index: number) {
 			console.log(index, card.id);
 			const cardData = {
-				term_or_question: card.term_or_question,
-				definition_a1: card.definition_a1,
+				termOrQuestion: card.termOrQuestion,
+				definitionA1: card.definitionA1,
 				position: index
 			};
-			if (!card.term_or_question || !card.definition_a1) {
+			if (!card.termOrQuestion || !card.definitionA1) {
 				throw {
 					cardNum: index + 1,
 					message: `Missing a term or definition.`
@@ -75,7 +75,7 @@ export const actions: Actions = {
 				cardData['type'] = 'card';
 				const card = structuredClone(
 					await locals.pb
-						.collection('study_items')
+						.collection('studyItems')
 						.create(cardData, { $autoCancel: false })
 						.catch((e) => {
 							throw {
@@ -89,7 +89,7 @@ export const actions: Actions = {
 				data.cards[index] = card;
 			} else {
 				await locals.pb
-					.collection('study_items')
+					.collection('studyItems')
 					.update(card.id, cardData, { $autoCancel: false })
 					.catch((e) => {
 						throw {
@@ -118,7 +118,7 @@ export const actions: Actions = {
 
 		data.deletedCards.forEach((cardId) => {
 			locals.pb
-				.collection('study_items')
+				.collection('studyItems')
 				.delete(cardId)
 				.catch((e) => {
 					console.log(e);
@@ -136,7 +136,7 @@ export const actions: Actions = {
 			description: data.set.description.trim(),
 			visibility: data.set.visibility,
 			tags: data.tags.join(','), // convert the array to a string
-            study_items: data.cards.map((card) => card.id)
+            studyItems: data.cards.map((card) => card.id)
 		};
 
 		console.log('updating set');
@@ -199,19 +199,19 @@ export const actions: Actions = {
 		async function updateCard(card: ClientCard, index: number) {
 			console.log(index, card.id);
 			const cardData = {
-				term_or_question: card.term_or_question,
-				definition_a1: card.definition_a1.trim(),
+				termOrQuestion: card.termOrQuestion,
+				definitionA1: card.definitionA1.trim(),
 				a2: card.a2.trim(),
 				a3: card.a3.trim(),
 				a4: card.a4.trim(),
 				position: index,
 				type: card.type,
-				time_seconds: Number(card.time_seconds),
-				correct_answers: card.correct_answers,
-				shown_answers: card.shown_answers
+				timeSeconds: Number(card.timeSeconds),
+				correctAnswers: card.correctAnswers,
+				shownAnswers: card.shownAnswers
 			};
 
-			if (cardData.shown_answers < 2 || cardData.shown_answers > 4) {
+			if (cardData.shownAnswers < 2 || cardData.shownAnswers > 4) {
 				throw {
 					cardNum: index + 1,
 					message: 'Invalid number of shown answers.'
@@ -219,11 +219,11 @@ export const actions: Actions = {
 			}
 
 			if (
-				!cardData.term_or_question ||
-				!cardData.definition_a1 ||
+				!cardData.termOrQuestion ||
+				!cardData.definitionA1 ||
 				(card.type !== 'text' && !cardData.a2) ||
-				(card.shown_answers >= 3 && !cardData.a3) ||
-				(card.shown_answers >= 4 && !cardData.a4)
+				(card.shownAnswers >= 3 && !cardData.a3) ||
+				(card.shownAnswers >= 4 && !cardData.a4)
 			) {
 				throw {
 					cardNum: index + 1,
@@ -242,7 +242,7 @@ export const actions: Actions = {
 
 				const card = structuredClone(
 					await locals.pb
-						.collection('study_items')
+						.collection('studyItems')
 						.create(cardData, { $autoCancel: false })
 						.catch((e) => {
 							throw {
@@ -256,7 +256,7 @@ export const actions: Actions = {
 				data.cards[index] = card;
 			} else {
 				await locals.pb
-					.collection('study_items')
+					.collection('studyItems')
 					.update(card.id, cardData, { $autoCancel: false })
 					.catch((e) => {
 						throw {
@@ -268,7 +268,7 @@ export const actions: Actions = {
 			}
 
 			if (card.type === 'text') {
-				card.text_answer = card.definition_a1.trim() ? card.definition_a1.split(',') : [];
+				card.text_answer = card.definitionA1.trim() ? card.definitionA1.split(',') : [];
 			}
 		}
 
@@ -289,7 +289,7 @@ export const actions: Actions = {
 
 		data.deletedCards.forEach((cardId) => {
 			locals.pb
-				.collection('study_items')
+				.collection('studyItems')
 				.delete(cardId)
 				.catch((e) => {
 					console.log(e);
@@ -307,7 +307,7 @@ export const actions: Actions = {
 			description: data.set.description.trim(),
 			visibility: data.set.visibility,
 			tags: data.tags.join(','), // convert the array to a string
-            study_items: data.cards.map((card) => card.id)
+            studyItems: data.cards.map((card) => card.id)
 		};
 
 		console.log('updating quiz');
