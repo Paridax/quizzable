@@ -7,7 +7,7 @@ migrate((db) => {
   collection.schema.addField(new SchemaField({
     "system": false,
     "id": "e12yzokh",
-    "name": "study_items",
+    "name": "studyItems",
     "type": "relation",
     "required": false,
     "unique": false,
@@ -41,7 +41,10 @@ migrate((db) => {
       "cascadeDelete": false,
       "minSelect": null,
       "maxSelect": null,
-      "displayFields": []
+      "displayFields": [
+        "id",
+        "quizzable"
+      ]
     }
   }))
 

@@ -3,14 +3,14 @@ migrate((db) => {
   const dao = new Dao(db)
   const collection = dao.findCollectionByNameOrId("5lcoeljthnupbd0")
 
-  collection.createRule = "@request.auth.id = user.id && quizzable.visibility != \"private\" && quizzable.draft = false"
+  collection.name = "quizzableViews"
 
   return dao.saveCollection(collection)
 }, (db) => {
   const dao = new Dao(db)
   const collection = dao.findCollectionByNameOrId("5lcoeljthnupbd0")
 
-  collection.createRule = null
+  collection.name = "quizzable_views"
 
   return dao.saveCollection(collection)
 })

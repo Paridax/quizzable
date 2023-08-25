@@ -3,20 +3,28 @@ migrate((db) => {
   const dao = new Dao(db)
   const collection = dao.findCollectionByNameOrId("tparxvjlw48it6u")
 
-  collection.listRule = "@request.auth.id = user.id"
-  collection.viewRule = "@request.auth.id = user.id"
-  collection.createRule = "@request.auth.id = user.id"
-  collection.deleteRule = "@request.auth.id = user.id"
+  // remove
+  collection.schema.removeField("ewhvktbz")
 
   return dao.saveCollection(collection)
 }, (db) => {
   const dao = new Dao(db)
   const collection = dao.findCollectionByNameOrId("tparxvjlw48it6u")
 
-  collection.listRule = null
-  collection.viewRule = null
-  collection.createRule = null
-  collection.deleteRule = null
+  // add
+  collection.schema.addField(new SchemaField({
+    "system": false,
+    "id": "ewhvktbz",
+    "name": "anonymousID",
+    "type": "text",
+    "required": false,
+    "unique": false,
+    "options": {
+      "min": null,
+      "max": null,
+      "pattern": ""
+    }
+  }))
 
   return dao.saveCollection(collection)
 })

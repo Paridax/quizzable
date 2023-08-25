@@ -3,50 +3,51 @@ migrate((db) => {
   const dao = new Dao(db)
   const collection = dao.findCollectionByNameOrId("g8m8m35b4uah7c0")
 
+  collection.name = "publicQuizzables"
   collection.options = {
-    "query": "SELECT\n  q.id as id,\n  q.author,\n  q.created,\n  q.title,\n  q.description,\n  q.tags,\n  q.type,\n  q.verified,\n  q.visibility,\n  q.draft,\n  q.study_items,\n  COUNT(likes_table.quizzable) AS likes,\n  COUNT(views.quizzable) AS views,\n  COUNT(cards.quizzable) AS card_count\nFROM quizzables AS q\nLEFT JOIN likes AS likes_table ON likes_table.quizzable = q.id\nLEFT JOIN quizzable_views AS views ON views.quizzable = q.id\nLEFT JOIN study_items AS cards ON cards.quizzable = q.id\nGROUP BY q.id, q.author, q.created, q.title, q.tags, q.type, q.verified;"
+    "query": "SELECT\n  q.id AS id,\n  q.author,\n  q.created,\n  q.title,\n  q.description,\n  q.tags,\n  q.type,\n  q.verified,\n  q.visibility,\n  q.draft,\n  q.studyItems,\n  (SELECT COUNT(*) FROM likes WHERE quizzable = q.id) AS likes,\n  (SELECT COUNT(*) FROM quizzableViews WHERE quizzable = q.id) AS views,\n  (SELECT COUNT(*) FROM studyItems WHERE quizzable = q.id) AS card_count\nFROM quizzables AS q;"
   }
 
   // remove
-  collection.schema.removeField("weaeji7q")
+  collection.schema.removeField("dxg0fpp0")
 
   // remove
-  collection.schema.removeField("oo5ja9se")
+  collection.schema.removeField("zozxrhdb")
 
   // remove
-  collection.schema.removeField("xq7obxiw")
+  collection.schema.removeField("t5yscp0m")
 
   // remove
-  collection.schema.removeField("t09mqpw3")
+  collection.schema.removeField("rqav576x")
 
   // remove
-  collection.schema.removeField("ic2dzyxq")
+  collection.schema.removeField("b1qnveca")
 
   // remove
-  collection.schema.removeField("62nckdhj")
+  collection.schema.removeField("cap6igis")
 
   // remove
-  collection.schema.removeField("5yyyce0t")
+  collection.schema.removeField("v7dkyq8l")
 
   // remove
-  collection.schema.removeField("kmeh1g39")
+  collection.schema.removeField("8yt9ooxr")
 
   // remove
-  collection.schema.removeField("cnkkeopa")
+  collection.schema.removeField("c1eknt53")
 
   // remove
-  collection.schema.removeField("xj9c1wcp")
+  collection.schema.removeField("9qkgw9hq")
 
   // remove
-  collection.schema.removeField("rncsywub")
+  collection.schema.removeField("hv2sl8lu")
 
   // remove
-  collection.schema.removeField("4ytmcglz")
+  collection.schema.removeField("ilgbqixh")
 
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "7nbgudv2",
+    "id": "aeql0sud",
     "name": "author",
     "type": "relation",
     "required": false,
@@ -65,7 +66,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "yka9d4ce",
+    "id": "jbyed9pi",
     "name": "title",
     "type": "text",
     "required": true,
@@ -80,7 +81,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "vftt0kql",
+    "id": "jazkfa8l",
     "name": "description",
     "type": "text",
     "required": false,
@@ -95,7 +96,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "9bhck6wx",
+    "id": "f59onudb",
     "name": "tags",
     "type": "text",
     "required": false,
@@ -110,7 +111,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "ntlqrk3d",
+    "id": "fivpoglv",
     "name": "type",
     "type": "select",
     "required": true,
@@ -127,7 +128,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "y0j1i6ot",
+    "id": "53ltah7o",
     "name": "verified",
     "type": "bool",
     "required": false,
@@ -138,7 +139,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "qizdgp4e",
+    "id": "d2gv4pag",
     "name": "visibility",
     "type": "select",
     "required": true,
@@ -156,7 +157,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "e8z80qoq",
+    "id": "q5sthku3",
     "name": "draft",
     "type": "bool",
     "required": false,
@@ -167,8 +168,8 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "mjzzdal9",
-    "name": "study_items",
+    "id": "7i5b0ysb",
+    "name": "studyItems",
     "type": "relation",
     "required": false,
     "unique": false,
@@ -187,43 +188,34 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "lj3jxnfy",
+    "id": "htmwdogo",
     "name": "likes",
-    "type": "number",
+    "type": "json",
     "required": false,
     "unique": false,
-    "options": {
-      "min": null,
-      "max": null
-    }
+    "options": {}
   }))
 
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "zp2rrq33",
+    "id": "4sjsil8e",
     "name": "views",
-    "type": "number",
+    "type": "json",
     "required": false,
     "unique": false,
-    "options": {
-      "min": null,
-      "max": null
-    }
+    "options": {}
   }))
 
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "fv7if1eg",
+    "id": "tmxrjcow",
     "name": "card_count",
-    "type": "number",
+    "type": "json",
     "required": false,
     "unique": false,
-    "options": {
-      "min": null,
-      "max": null
-    }
+    "options": {}
   }))
 
   return dao.saveCollection(collection)
@@ -231,14 +223,15 @@ migrate((db) => {
   const dao = new Dao(db)
   const collection = dao.findCollectionByNameOrId("g8m8m35b4uah7c0")
 
+  collection.name = "public_quizzables"
   collection.options = {
-    "query": "SELECT\n  q.id as id,\n  q.author,\n  q.created,\n  q.title,\n  q.description,\n  q.tags,\n  q.type,\n  q.verified,\n  q.visibility,\n  q.draft,\n  q.study_items,\n  COUNT(likes.quizzable) AS likes,\n  COUNT(views.quizzable) AS views,\n  COUNT(cards.quizzable) AS card_count\nFROM quizzables AS q\nLEFT JOIN likes AS likes ON likes.quizzable = q.id\nLEFT JOIN quizzable_views AS views ON views.quizzable = q.id\nLEFT JOIN study_items AS cards ON cards.quizzable = q.id\nGROUP BY q.id, q.author, q.created, q.title, q.tags, q.type, q.verified;"
+    "query": "SELECT\n  q.id AS id,\n  q.author,\n  q.created,\n  q.title,\n  q.description,\n  q.tags,\n  q.type,\n  q.verified,\n  q.visibility,\n  q.draft,\n  q.study_items,\n  (SELECT COUNT(*) FROM likes WHERE quizzable = q.id) AS likes,\n  (SELECT COUNT(*) FROM quizzable_views WHERE quizzable = q.id) AS views,\n  (SELECT COUNT(*) FROM study_items WHERE quizzable = q.id) AS card_count\nFROM quizzables AS q;"
   }
 
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "weaeji7q",
+    "id": "dxg0fpp0",
     "name": "author",
     "type": "relation",
     "required": false,
@@ -257,7 +250,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "oo5ja9se",
+    "id": "zozxrhdb",
     "name": "title",
     "type": "text",
     "required": true,
@@ -272,7 +265,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "xq7obxiw",
+    "id": "t5yscp0m",
     "name": "description",
     "type": "text",
     "required": false,
@@ -287,7 +280,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "t09mqpw3",
+    "id": "rqav576x",
     "name": "tags",
     "type": "text",
     "required": false,
@@ -302,7 +295,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "ic2dzyxq",
+    "id": "b1qnveca",
     "name": "type",
     "type": "select",
     "required": true,
@@ -319,7 +312,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "62nckdhj",
+    "id": "cap6igis",
     "name": "verified",
     "type": "bool",
     "required": false,
@@ -330,7 +323,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "5yyyce0t",
+    "id": "v7dkyq8l",
     "name": "visibility",
     "type": "select",
     "required": true,
@@ -348,7 +341,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "kmeh1g39",
+    "id": "8yt9ooxr",
     "name": "draft",
     "type": "bool",
     "required": false,
@@ -359,7 +352,7 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "cnkkeopa",
+    "id": "c1eknt53",
     "name": "study_items",
     "type": "relation",
     "required": false,
@@ -379,80 +372,71 @@ migrate((db) => {
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "xj9c1wcp",
+    "id": "9qkgw9hq",
     "name": "likes",
-    "type": "number",
+    "type": "json",
     "required": false,
     "unique": false,
-    "options": {
-      "min": null,
-      "max": null
-    }
+    "options": {}
   }))
 
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "rncsywub",
+    "id": "hv2sl8lu",
     "name": "views",
-    "type": "number",
+    "type": "json",
     "required": false,
     "unique": false,
-    "options": {
-      "min": null,
-      "max": null
-    }
+    "options": {}
   }))
 
   // add
   collection.schema.addField(new SchemaField({
     "system": false,
-    "id": "4ytmcglz",
+    "id": "ilgbqixh",
     "name": "card_count",
-    "type": "number",
+    "type": "json",
     "required": false,
     "unique": false,
-    "options": {
-      "min": null,
-      "max": null
-    }
+    "options": {}
   }))
 
   // remove
-  collection.schema.removeField("7nbgudv2")
+  collection.schema.removeField("aeql0sud")
 
   // remove
-  collection.schema.removeField("yka9d4ce")
+  collection.schema.removeField("jbyed9pi")
 
   // remove
-  collection.schema.removeField("vftt0kql")
+  collection.schema.removeField("jazkfa8l")
 
   // remove
-  collection.schema.removeField("9bhck6wx")
+  collection.schema.removeField("f59onudb")
 
   // remove
-  collection.schema.removeField("ntlqrk3d")
+  collection.schema.removeField("fivpoglv")
 
   // remove
-  collection.schema.removeField("y0j1i6ot")
+  collection.schema.removeField("53ltah7o")
 
   // remove
-  collection.schema.removeField("qizdgp4e")
+  collection.schema.removeField("d2gv4pag")
 
   // remove
-  collection.schema.removeField("e8z80qoq")
+  collection.schema.removeField("q5sthku3")
 
   // remove
-  collection.schema.removeField("mjzzdal9")
+  collection.schema.removeField("7i5b0ysb")
 
   // remove
-  collection.schema.removeField("lj3jxnfy")
+  collection.schema.removeField("htmwdogo")
 
   // remove
-  collection.schema.removeField("zp2rrq33")
+  collection.schema.removeField("4sjsil8e")
 
   // remove
-  collection.schema.removeField("fv7if1eg")
+  collection.schema.removeField("tmxrjcow")
 
   return dao.saveCollection(collection)
 })
