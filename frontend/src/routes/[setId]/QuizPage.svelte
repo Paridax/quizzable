@@ -130,14 +130,14 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <h3 class="h4 md:col-span-2 font-semibold">Example Questions</h3>
         <div class="card p-5 px-7">
-            <span class="text-surface-500-400-token font-bold">1.</span> {data.cards[0].term_or_question}
+            <span class="text-surface-500-400-token font-bold">1.</span> {data.cards[0].termOrQuestion}
         </div>
         <div class="card p-5 px-7">
-            <span class="text-surface-500-400-token font-bold">2.</span> {data.cards[1].term_or_question}
+            <span class="text-surface-500-400-token font-bold">2.</span> {data.cards[1].termOrQuestion}
         </div>
         {#if data.cards.length > 7}
             <div class="card p-5 px-7">
-                <span class="text-surface-500-400-token font-bold">3.</span> {data.cards[2].term_or_question}
+                <span class="text-surface-500-400-token font-bold">3.</span> {data.cards[2].termOrQuestion}
             </div>
         {/if}
     </div>

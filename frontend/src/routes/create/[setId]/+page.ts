@@ -16,7 +16,7 @@ export const load = async ({ params }) => {
         throw redirect(303, `/edit/${params.setId}`);
     }
 
-    const cards = await pb.collection('study_items').getFullList({
+    const cards = await pb.collection('studyItems').getFullList({
 			filter: `quizzable = "${params.setId}" && type ${set.type === "quiz" ? "!" : ""}= "card"`, // Look for all non-cards if quiz
             sort: 'position'
 		})
@@ -28,7 +28,7 @@ export const load = async ({ params }) => {
     if (set.type === "quiz") {
         cards.forEach(card => {
             if (card.type === "text") {
-                card.text_answer = card.definition_a1.split(',');
+                card.text_answer = card.definitionA1.split(',');
             } else {
                 card.text_answer = [];
             }

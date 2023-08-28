@@ -21,14 +21,14 @@
         cards: {
             id: string;
             type: "card" | "single" | "multi" | "order" | "text";
-            term_or_question: string;
-            definition_a1: string;
+            termOrQuestion: string;
+            definitionA1: string;
             a2: string;
             a3: string;
             a4: string;
-            correct_answers: string[];
-            shown_answers: number;
-            time_seconds: string;
+            correctAnswers: string[];
+            shownAnswers: number;
+            timeSeconds: string;
             new: boolean;
         }[];
         tags: string[];
@@ -98,11 +98,6 @@
             saving = false;
             return;
         }
-        toastStore.trigger({
-            message: `Successfully ${autosave ? 'auto' : ''}saved your ${quizOrFlashcards.toLowerCase()} draft!`,
-            background: "variant-filled-success",
-            timeout: 5000
-        });
         syncCount = 1;
         data.cards = response.body.cards;
         data.set = response.body.set;
@@ -197,7 +192,7 @@
             Are you sure you want to discard your draft? This action is permanent and <span class="text-error-500 font-bold">can never be undone</span>.
         </p>
         <div class="flex gap-5 w-full items-end mt-2">
-            <button on:click={() => discardDialog = false} class="btn grow variant-filled-secondary">
+            <button on:click={() => dialogTransition = false} class="btn grow variant-filled-secondary">
                 Cancel
             </button>
             <button on:click={() => handleDelete()} class="btn grow variant-filled-error">
@@ -208,7 +203,7 @@
 </Dialog>
 
 <div class="container mx-auto my-10">
-    <div class="xl:px-72">
+    <div class="xl:max-w-4xl mx-auto px-5">
         <div class="flex items-center justify-between">
             <h3 class="h3 font-bold">{title}</h3>
             <div class="flex items-center justify-center gap-5">

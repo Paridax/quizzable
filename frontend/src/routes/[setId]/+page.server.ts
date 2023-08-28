@@ -5,15 +5,15 @@ import type { Actions } from '@sveltejs/kit';
 type ClientCard = {
 	id: string;
 	type: 'card' | 'single' | 'multi' | 'order' | 'text';
-	term_or_question: string;
-	definition_a1: string;
+	termOrQuestion: string;
+	definitionA1: string;
 	a2: string;
 	a3: string;
 	a4: string;
-	correct_answers: string[];
+	correctAnswers: string[];
 	text_answer: string[];
-	shown_answers: number;
-	time_seconds: string;
+	shownAnswers: number;
+	timeSeconds: string;
 	new: boolean;
 };
 
@@ -32,7 +32,7 @@ export const actions: Actions = {
         };
 
         // check if set exists
-        const set = await pb.collection('public_quizzables').getOne(data.setId).catch(() => null);
+        const set = await pb.collection('publicQuizzables').getOne(data.setId).catch(() => null);
 
         if (!set) return {
             type: 'error',

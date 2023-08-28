@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { pb } from "$lib/pocketbase";
+	import type { User } from "$lib/types";
 	import { shorthandNumber } from "$lib/utils";
+	import { onMount } from "svelte";
 
     interface Set {
         id: string;
+        author: string;
         title: string;
         description: string;
         draft: boolean;
@@ -18,12 +22,21 @@
     $: visibility = set.visibility === 'public' ? 'Public' : set.visibility === 'unlisted' ? 'Unlisted' : 'Private';
 
     export let authorUsername = '';
+
+    onMount(async () => {
+        const author: User = await pb.collection('publicUsers').getOne(set.author, { $autoCancel: false });
+        console.log(author);
+        authorUsername = author ? author?.username : '';
+    });
 </script>
 
-<a href={set.draft ? `/create/${set.id}` : `/${set.id}`} class="relative group hover:variant-filled-primary flex flex-col gap-2.5 justify-start  card block p-5 pt-24 card-hover">
+<a href={set.draft ? `/create/${set.id}` : `/${set.id}`} class="relative group hover:variant-filled-primary flex flex-col gap-2.5 justify-start card block p-5 pt-20 card-hover">
     <div>
         <p class="text-xs uppercase font-semibold p">{set.type === 'quiz' ? 'Quiz' : 'Flashcards'}</p>
         <h1 class="h4 w-full font-semibold">{set.title}</h1>
+        {#if authorUsername}
+            <p class="text-sm p-dark">by <a on:click|stopPropagation href={`/user/${authorUsername}`}>@{authorUsername}</a></p>
+        {/if}
     </div>
     <div class="flex flex-col gap-2.5">
         <p class="w-full line-clamp-2 break-words text-surface-600-300-token text-sm">{set.description ? set.description : "No description."}</p>
