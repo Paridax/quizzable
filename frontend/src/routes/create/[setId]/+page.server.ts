@@ -1,40 +1,16 @@
+import type { Card, Set } from '$lib/types';
 import { readForm } from '$lib/utils';
 import type { Actions } from '@sveltejs/kit';
-
-type ClientCard = {
-    id: string;
-    type: 'card' | 'single' | 'multi' | 'order' | 'text';
-    termOrQuestion: string;
-    definitionA1: string;
-    a2: string;
-    a3: string;
-    a4: string;
-    correctAnswers: string[];
-    text_answer: string[];
-    shownAnswers: number;
-    timeSeconds: string;
-    new: boolean;
-}
 
 export const actions: Actions = {
 	savecards: async ({ locals, request }) => {
 		console.log('saving the set');
 
 		const data = readForm(await request.formData()) as {
-			set: {
-				title: string;
-				description: string;
-				draft: boolean;
-				visibility: 'public' | 'private' | 'unlisted';
-				id: string;
-			};
-			cards: {
-				id: string;
-				termOrQuestion: string;
-				definitionA1: string;
-				position: number;
+			set: Set;
+			cards: (Card & {
 				new: true | undefined;
-			}[];
+			})[];
 			tags: string[];
 			deletedCards: string[];
 		};
@@ -48,15 +24,16 @@ export const actions: Actions = {
 			};
 		}
 
-		data.set = structuredClone(updatedSet);
-
-		async function updateCard(card, index: number) {
+		async function updateCard(card: Card, index: number) {
 			console.log(index, card.id);
 			const cardData = {
 				termOrQuestion: card.termOrQuestion,
 				definitionA1: card.definitionA1,
-				position: index
+				position: index,
+				quizzable: undefined as string | undefined,
+				type: undefined as string | undefined
 			};
+
 			if (!card.termOrQuestion || !card.definitionA1) {
 				throw {
 					cardNum: index + 1,
@@ -65,10 +42,10 @@ export const actions: Actions = {
 			}
 
 			if (card.new) {
-				cardData['quizzable'] = data.set.id;
-				cardData['type'] = 'card';
+				cardData.quizzable = data.set.id;
+				cardData.type = 'card';
 				const card = structuredClone(
-					await locals.pb
+					(await locals.pb
 						.collection('studyItems')
 						.create(cardData, { $autoCancel: false })
 						.catch((e) => {
@@ -77,7 +54,7 @@ export const actions: Actions = {
 								message: e.message,
 								cardNum: index + 1
 							};
-						})
+						})) as Card & { new: true | undefined }
 				);
 
 				data.cards[index] = card;
@@ -102,7 +79,7 @@ export const actions: Actions = {
 				console.log(e);
 				throw {
 					type: 'error',
-					message: `There was a problem updating a card (card #${e.cardNum}). ${e.message}`,
+					message: `There was a problem updating a card (Card #${e.cardNum}). ${e.message}`,
 					status: 500
 				};
 			});
@@ -134,7 +111,7 @@ export const actions: Actions = {
 		};
 
 		console.log('updating set');
-		const updatedSet = await locals.pb
+		const updatedSet = (await locals.pb
 			.collection('quizzables')
 			.update(data.set.id, set)
 			.catch((e) => {
@@ -144,7 +121,9 @@ export const actions: Actions = {
 					message: 'There was a problem updating the set. ' + e.message,
 					status: 500
 				};
-			});
+			})) as Set;
+
+		data.set = structuredClone(updatedSet);
 
 		return {
 			status: 200,
@@ -156,17 +135,9 @@ export const actions: Actions = {
 	},
 
 	savequiz: async ({ locals, request }) => {
-		console.log('saving the quiz');
-
 		const data = readForm(await request.formData()) as {
-			set: {
-				title: string;
-				description: string;
-				draft: boolean;
-				visibility: 'public' | 'private' | 'unlisted';
-				id: string;
-			};
-			cards: ClientCard[];
+			set: Set;
+			cards: Card[];
 			tags: string[];
 			deletedCards: string[];
 		};
@@ -180,7 +151,7 @@ export const actions: Actions = {
 			};
 		}
 
-		async function updateCard(card: ClientCard, index: number) {
+		async function updateCard(card: Card, index: number) {
 			console.log(index, card.id);
 			const cardData = {
 				termOrQuestion: card.termOrQuestion,
@@ -192,7 +163,8 @@ export const actions: Actions = {
 				type: card.type,
 				timeSeconds: Number(card.timeSeconds),
 				correctAnswers: card.correctAnswers,
-				shownAnswers: card.shownAnswers
+				shownAnswers: card.shownAnswers,
+				quizzable: undefined as string | undefined
 			};
 
 			if (cardData.shownAnswers < 2 || cardData.shownAnswers > 4) {
@@ -216,7 +188,7 @@ export const actions: Actions = {
 			}
 
 			if (card.new) {
-				cardData['quizzable'] = data.set.id;
+				cardData.quizzable = data.set.id;
 				if (cardData.type === 'card') {
 					throw {
 						cardNum: index + 1,
@@ -225,7 +197,7 @@ export const actions: Actions = {
 				}
 
 				const card = structuredClone(
-					await locals.pb
+					(await locals.pb
 						.collection('studyItems')
 						.create(cardData, { $autoCancel: false })
 						.catch((e) => {
@@ -234,7 +206,7 @@ export const actions: Actions = {
 								message: e.message,
 								cardNum: index + 1
 							};
-						})
+						})) as Card
 				);
 
 				data.cards[index] = card;
@@ -308,7 +280,7 @@ export const actions: Actions = {
 					};
 				});
 
-			data.set = structuredClone(updatedSet);
+			data.set = structuredClone(updatedSet) as Set;
 		} catch (e) {
 			return e;
 		}
@@ -326,28 +298,30 @@ export const actions: Actions = {
 		console.log('publishing the set');
 
 		const data = readForm(await request.formData()) as {
-            set: {
-                id: string;
-                title: string;
-                description: string;
-                visibility: string;
-                tags: string[];
-                type: "quiz" | "card";
-            }
+			set: {
+				id: string;
+				title: string;
+				description: string;
+				visibility: string;
+				tags: string[];
+				type: 'quiz' | 'card';
+			};
 			setId: string;
 			draft: boolean;
-            cards: ClientCard[];
+			cards: Card[];
 		};
 
 		console.log(data);
 
-        if (data.cards.length < 3) {
-            return {
-                type: 'error',
-                message: `You need at least 3 ${data.set.type === "quiz" ? "questions" : "cards"} to publish a Quizzable.`,
-                status: 400
-            };
-        }
+		if (data.cards.length < 3) {
+			return {
+				type: 'error',
+				message: `You need at least 3 ${
+					data.set.type === 'quiz' ? 'questions' : 'cards'
+				} to publish a Quizzable.`,
+				status: 400
+			};
+		}
 
 		if (!data.draft) {
 			return {
@@ -377,25 +351,27 @@ export const actions: Actions = {
 		};
 	},
 
-    delete: async ({ locals, request }) => {
-        const data = readForm(await request.formData()) as {
-            setId: string;
-        };
+	delete: async ({ locals, request }) => {
+		const data = readForm(await request.formData()) as {
+			setId: string;
+		};
 
-        return await locals.pb.collection("quizzables").delete(data.setId)
-        .then(() => {
-            return {
-                status: 200,
-                message: "Deleted the set!"
-            };
-        })
-        .catch((e) => {
-            console.log(e);
-            return {
-                type: 'error',
-                message: 'There was a problem deleting the set. ' + e.message,
-                status: 500
-            };
-        });
-    }
+		return await locals.pb
+			.collection('quizzables')
+			.delete(data.setId)
+			.then(() => {
+				return {
+					status: 200,
+					message: 'Deleted the Quizzable!'
+				};
+			})
+			.catch((e) => {
+				console.log(e);
+				return {
+					type: 'error',
+					message: 'There was a problem deleting the set. ' + e.message,
+					status: 500
+				};
+			});
+	}
 } satisfies Actions;
