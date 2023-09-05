@@ -2,7 +2,7 @@
 	import { pb } from '$lib/pocketbase';
 	import type { QuizQuestion, Set, SoloQuiz } from '$lib/types';
 	import { onMount } from 'svelte';
-	import Loading from '../../../components/Loading.svelte';
+	import Loading from '$lib/components/Loading.svelte';
 	import { sendToServer } from '$lib/utils';
 	import { goto } from '$app/navigation';
 

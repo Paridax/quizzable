@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { TabGroup, Tab, TabAnchor } from '@skeletonlabs/skeleton';
-	import Loading from '../../components/Loading.svelte';
+	import Loading from '$lib/components/Loading.svelte';
 	import { currentUser } from '$lib/pocketbase';
 
 	const newSet = {

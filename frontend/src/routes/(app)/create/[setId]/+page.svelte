@@ -1,12 +1,12 @@
 <script lang="ts">
-	import EditFlashcards from './../../../components/EditFlashcards.svelte';
+	import EditFlashcards from '$lib/components/EditFlashcards.svelte';
 	import { constructDebounce, sendToServer } from '$lib/utils';
 	import { InputChip, toastStore } from '@skeletonlabs/skeleton';
-	import Loading from '../../../components/Loading.svelte';
+	import Loading from '$lib/components/Loading.svelte';
 	import { goto } from '$app/navigation';
-	import TextInput from '../../../components/TextInput.svelte';
-	import TextArea from '../../../components/TextArea.svelte';
-	import EditQuiz from '../../../components/EditQuiz.svelte';
+	import TextInput from '$lib/components/TextInput.svelte';
+	import TextArea from '$lib/components/TextArea.svelte';
+	import EditQuiz from '$lib/components/EditQuiz.svelte';
 	import { Dialog, Transition } from '@rgossiaux/svelte-headlessui';
 
     export let data: {

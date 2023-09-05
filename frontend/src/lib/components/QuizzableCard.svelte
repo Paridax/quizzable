@@ -1,22 +1,10 @@
 <script lang="ts">
 	import { pb } from '$lib/pocketbase';
-	import type { User } from '$lib/types';
+	import type { PublicSet, User } from '$lib/types';
 	import { shorthandNumber } from '$lib/utils';
 	import { onMount } from 'svelte';
 
-	interface Set {
-		id: string;
-		author: string;
-		title: string;
-		description: string;
-		draft: boolean;
-		visibility: string;
-		type: 'quiz' | 'card';
-		views: number;
-		likes: number;
-	}
-
-	export let set: Set;
+	export let set: PublicSet;
 	let visibility = 'Public';
 
 	$: visibility =
@@ -35,7 +23,7 @@
 
 <a
 	href={set.draft ? `/create/${set.id}` : `/${set.id}`}
-	class="relative group hover:variant-filled-primary flex flex-col justify-between card block p-5 card-hover active:scale-[97%]"
+	class="relative group hover:variant-filled-primary flex flex-col justify-between card block p-5 pt-6 card-hover active:scale-[97%] min-h-[230px]"
 >
 	<div>
 		<p class="text-xs uppercase font-semibold p">{set.type === 'quiz' ? 'Quiz' : 'Flashcards'}</p>

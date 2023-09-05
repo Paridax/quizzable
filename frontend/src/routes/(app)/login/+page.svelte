@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { applyAction, enhance } from '$app/forms';
 	import { pb } from '$lib/pocketbase';
-	import Loading from '../../components/Loading.svelte';
+	import Loading from '$lib/components/Loading.svelte';
 	let email = '';
 	let password = '';
     let error = '';

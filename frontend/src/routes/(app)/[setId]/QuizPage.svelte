@@ -4,7 +4,7 @@
 	import { sendToServer, shorthandNumber } from '$lib/utils';
 	import { Transition } from '@rgossiaux/svelte-headlessui';
 	import { popup, toastStore, type PopupSettings } from '@skeletonlabs/skeleton';
-	import LikeButton from '../../components/LikeButton.svelte';
+	import LikeButton from '$lib/components/LikeButton.svelte';
 	import { goto } from '$app/navigation';
 
 	export let data: {

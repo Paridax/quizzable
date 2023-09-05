@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Card, PublicSet } from '$lib/types';
-	import Loading from '../../components/Loading.svelte';
+	import Loading from '$lib/components/Loading.svelte';
 	import QuizPage from './QuizPage.svelte';
 
 	export let data: {
